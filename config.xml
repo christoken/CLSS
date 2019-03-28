@@ -7,7 +7,7 @@
 	<author email="chepken@gmail.com" href="www.threepillars.co.ke">
 	  Chris Ken
 	</author>
-<icon src="" />
+
 <access origin="*" />
 <allow-intent href="*" />
 <allow-navigation href="*" />
