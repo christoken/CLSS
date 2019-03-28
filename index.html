@@ -95,14 +95,14 @@
 *      hasEnrolledFingerprints:boolean
 *   }
 */
-FingerprintAuth.isAvailable(function (result) {
-
+document.addEventListener('deviceready', function () {
+	alert("Device ready");
+	FingerprintAuth.isAvailable(function (result) {
     console.log("FingerprintAuth available: " + JSON.stringify(result));
 	alert("FingerprintAuth available: " + JSON.stringify(result));
     
     // If has fingerprint device and has fingerprints registered
     if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
-
         // Check the docs to know more about the encryptConfig object :)
         var encryptConfig = {
             clientId: "myAppName",
@@ -114,7 +114,6 @@ FingerprintAuth.isAvailable(function (result) {
             dialogMessage: "Put your finger on the device",
             dialogHint: "No one will steal your identity, promised"
         }; // See config object for required parameters
-
         // Set config and success callback
         FingerprintAuth.encrypt(encryptConfig, function(_fingerResult){
             console.log("successCallback(): " + JSON.stringify(_fingerResult));
@@ -138,7 +137,6 @@ FingerprintAuth.isAvailable(function (result) {
             }
         });
     }
-
 /**
 * @return {
 *      isAvailable:boolean,
@@ -149,6 +147,8 @@ FingerprintAuth.isAvailable(function (result) {
 }, function (message) {
     console.log("isAvailableError(): " + message);
 	   alert("isAvailableError(): " + message);
+});
+
 });
 </script>
 </body>
