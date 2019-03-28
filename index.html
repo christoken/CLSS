@@ -113,25 +113,12 @@
 	</div>
 </div>
 <script>
-	//handle for orientation-change event:
-	$(window).on('orientationchange', function(event) {
-		alert(event.orientation);
-	});
+	function readFingerprint(){ // a function to read the fingerprint and call another to 
+							//log location
 	
-	// Check if device supports fingerprint
-/**
-* @return {
-*      isAvailable:boolean,
-*      isHardwareDetected:boolean,
-*      hasEnrolledFingerprints:boolean
-*   }
-*/
-	document.addEventListener('deviceready', function () {
-		alert("Device ready");
-		FingerprintAuth.isAvailable(function (result) {
+	FingerprintAuth.isAvailable(function (result) {
 		console.log("FingerprintAuth available: " + JSON.stringify(result));
-		alert("FingerprintAuth available: " + JSON.stringify(result));
-    
+		alert("FingerprintAuth available: " + JSON.stringify(result));    
     // If has fingerprint device and has fingerprints registered
     if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
         // Check the docs to know more about the encryptConfig object :)
@@ -150,11 +137,14 @@
             console.log("successCallback(): " + JSON.stringify(_fingerResult));
             if (_fingerResult.withFingerprint) {
                 console.log("Successfully encrypted credentials.");
-		 alert("Successfully encrypted credentials.");
-                console.log("Encrypted credentials: " + result.token);  
+				alert("Successfully encrypted credentials.");
+                console.log("Encrypted credentials: " + result.token); 
+			// Logged in with fingerprint hence, call log location
+			
             } else if (_fingerResult.withBackup) {
+			//else logged in with password hence no loging location
                 console.log("Authenticated with backup password");
-		    alert("Authenticated with backup password");
+				alert("Authenticated with backup password");
             }
         // Error callback
         }, function(err){
@@ -176,12 +166,10 @@
 *   }
 */
 }, function (message) {
-    console.log("isAvailableError(): " + message);
+      console.log("isAvailableError(): " + message);
 	   alert("isAvailableError(): " + message);
 });
-
-});
-
+	}
 	function logAlert(msg) {
 		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
 		document.getElementById("alertclass1").innerHTML=msg;
@@ -192,9 +180,9 @@
 			height: 200,
 			buttons:{
 			Yes: function() {
-			$(this).dialog("close");	 
-			
+			$(this).dialog("close");			
 			//1. Call the fingerprint function and then
+			readFingerprint();
 			//Call log location function
     },
 		No: function() {
@@ -217,8 +205,7 @@
 		closeOnEscape: false
 		});
   }
-  
-	function exitAlert(msg) {
+  	function exitAlert(msg) {
 		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
 		document.getElementById("alertclass1").innerHTML=msg;
 	  $( "#dialog" ).dialog({
@@ -230,7 +217,8 @@
 		Yes: function() {
         $(this).dialog("close");
 		//alert("Choose ok"); 
-		cordova.plugins.exit();		
+		cordova.plugins.exit();
+		navigator.app.exitApp();		
         //myOkFunction();
     },
 		No: function() {
@@ -253,7 +241,7 @@
 		closeOnEscape: false
 		});
   }   
-  function displayAlert(response) {
+	function displayAlert(response) {
  dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
 	document.getElementById("alertclass1").innerHTML=response;
 	  $( "#dialog" ).dialog({
