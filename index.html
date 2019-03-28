@@ -4,81 +4,112 @@
 	<title>jQuery Mobile Pages</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+	 <link rel="stylesheet" href="css/jquery-ui.css">
 	<!-- link to jQuery and jQuery Mobile JavaScript libraries: -->
 	<script src="js/jquery-1.10.1.min.js"></script>
-	<script src="js/jquery.mobile-1.3.1.min.js"></script>
-	<script type="text/javascript" src="cordova.js"></script>
-
+	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
+	 <script src="js/jquery-ui.js"> </script>
+	<!--<script type="text/javascript" src="cordova.js"></script> -->
+ <script>
+	var serverURL="http://localhost/LSS/LSSserver/"; // The server address of the PHP files
+	 var baseURL="http://localhost/LSS/";
+ </script>
 </head>
 
-<body>
-
+<body  style="display: instructions;">
+	<div id="dialog" title="Location Log">
+		<p id="alertclass1">Location Log</p>
+	</div>
+	
 <!-- the div below is a page - the home page -->
-<div data-role="page" id="home">
+<div data-role="page" id="instructions">
 
 	<!-- the div below is the home page's header -->
 	<div data-role="header">
-		<h1>Home</h1>
+		<h1>Instructions</h1>
 		<div data-role="navbar">
 	        <ul>
-	            <li><a href="#home" class="ui-btn-active ui-state-persist" data-icon="home">Home</a></li>
-	            <li><a href="#about" data-icon="star">About</a></li>
-	            <li><a href="#contact" data-icon="info">Contact</a></li>
+	            <li><a href="#instructions" class="ui-btn-active ui-state-persist" data-icon="home">Instructions</a></li>
+	            <li><a href="#log" data-icon="star">Log</a></li>
+	            <li><a href="#exit" data-icon="info">Exit</a></li>
 	        </ul>
 	    </div>
 	</div>
 
 	<!-- the div below is the home page's main content -->
 	<div data-role="content">
-		<p>Home area</p>
+		<p>How to use this App</p>
+		<ol>
+		<li> Launch the application on your phone </li>
+		<li> Go to to Log menu </li>
+		<li> Put your registered finger on the scanner </li>
+		<li> Confirm if you wish to log the location</li>
+		<li> Exit the application</li>
+		</ol>
 		
 	</div>
 
 	<!-- the div below is the home page's footer -->
 	<div data-role="footer">
-		<h4>Location Finder @LSL</h4>
+		<h4>Location Log  &copy;Lavington Security Limited</h4>
 	</div>
 </div>
 
 <!-- the div below is a page - the about page -->
-<div data-role="page" id="about">
+<div data-role="page" id="log">
 	<div data-role="header">
-		<h1>About</h1>
+		<h1>Log</h1>
 		<div data-role="navbar">
 	        <ul>
-	            <li><a href="#home" data-icon="home">Home</a></li>
-	            <li><a href="#about" class="ui-btn-active ui-state-persist" data-icon="star">About</a></li>
-	            <li><a href="#contact" data-icon="info">Contact</a></li>
+	            <li><a href="#instructions" data-icon="home">Instructions</a></li>
+	            <li><a href="#log" class="ui-btn-active ui-state-persist" data-icon="star">Log</a></li>
+	            <li><a href="#exit" data-icon="info">Exit</a></li>
 	        </ul>
 	    </div>
 	</div>
 	<div data-role="content">
-		<p>About us</p>
-		
+		<p>Press the button to log your current location</p>
+		<script>
+		$(document).ready(function(){		
+		$("#btnLogLocation").click(function(){		
+			logAlert("Are you sure you want to log?");
+		});	
+			
+				});
+		</script>
+		<div> <a data-role="button" data-icon="flat-settings" data-theme="d" id="btnLogLocation" >Log</a></div>
 	</div>
 	<div data-role="footer" data-theme="e">
-		<h4>Location Finder @LSL</h4>
+		<h4>Location Log  &copy;Lavington Security Limited</h4>
 	</div>
 </div>
 
 <!-- the div below is a page - the contact page -->
-<div data-role="page" id="contact">
+<div data-role="page" id="exit">
+		<script>
+		$(document).ready(function(){		
+		$("#btnExitapp").click(function(){		
+		//alert("Clicked button");	
+			exitAlert("Are you sure you want exit App?");
+		});
+	});
+		</script>
 	<div data-role="header">
-		<h1>Contact</h1>
+		<h1>Exit</h1>
 		<div data-role="navbar">
 	        <ul>
-	            <li><a href="#home" data-icon="home">Home</a></li>
-	            <li><a href="#about" data-icon="star">About</a></li>
-	            <li><a href="#contact" class="ui-btn-active ui-state-persist" data-icon="info">Contact</a></li>
+	            <li><a href="#instructions" data-icon="home">Instructions</a></li>
+	            <li><a href="#log" data-icon="star">Log</a></li>
+	            <li><a href="#exit" class="ui-btn-active ui-state-persist" data-icon="info">Exit</a></li>
 	        </ul>
 	    </div>
 	</div>
 	<div data-role="content">
-		<p>Our Contacts</p>
-		
+		<p>To exit this app, click the button</p>
+		<div> <a data-role="button" data-icon="flat-settings" data-theme="d" id="btnExitapp" >Exit</a></div>
 	</div>
 	<div data-role="footer">
-		<h4>Location Finder @LSL</h4>
+		<h4>Location Log  &copy;Lavington Security Limited</h4>
 	</div>
 </div>
 <script>
@@ -95,11 +126,11 @@
 *      hasEnrolledFingerprints:boolean
 *   }
 */
-document.addEventListener('deviceready', function () {
-	alert("Device ready");
-	FingerprintAuth.isAvailable(function (result) {
-    console.log("FingerprintAuth available: " + JSON.stringify(result));
-	alert("FingerprintAuth available: " + JSON.stringify(result));
+	document.addEventListener('deviceready', function () {
+		alert("Device ready");
+		FingerprintAuth.isAvailable(function (result) {
+		console.log("FingerprintAuth available: " + JSON.stringify(result));
+		alert("FingerprintAuth available: " + JSON.stringify(result));
     
     // If has fingerprint device and has fingerprints registered
     if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
@@ -110,9 +141,9 @@ document.addEventListener('deviceready', function () {
             password: "currentUserPassword",
             maxAttempts: 5,
             locale: "en_US",
-            dialogTitle: "Hey dude, your finger",
-            dialogMessage: "Put your finger on the device",
-            dialogHint: "No one will steal your identity, promised"
+            dialogTitle: "Scan Fingure",
+            dialogMessage: "Kindly Put your finger on the device scaner",
+            dialogHint: "Ensure that you see a Successfully encrypted credentials"
         }; // See config object for required parameters
         // Set config and success callback
         FingerprintAuth.encrypt(encryptConfig, function(_fingerResult){
@@ -150,6 +181,104 @@ document.addEventListener('deviceready', function () {
 });
 
 });
+
+	function logAlert(msg) {
+		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
+		document.getElementById("alertclass1").innerHTML=msg;
+			$( "#dialog" ).dialog({
+			autoOpen: true,
+			modal: true,
+			width: 300,
+			height: 200,
+			buttons:{
+			Yes: function() {
+			$(this).dialog("close");	 
+			
+			//1. Call the fingerprint function and then
+			//Call log location function
+    },
+		No: function() {
+        $(this).dialog("close");
+        //myCancelFunction();
+		window.location.replace(baseURL +"index.html#log");
+		//alert("Choose cancel");
+    }
+		},
+		show: {
+		effect: "slide",
+		duration: 200
+		},
+		hide: {
+		effect: "fade",
+		duration: 200
+		}	
+		});		
+	$( ".selector" ).dialog({
+		closeOnEscape: false
+		});
+  }
+  
+	function exitAlert(msg) {
+		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
+		document.getElementById("alertclass1").innerHTML=msg;
+	  $( "#dialog" ).dialog({
+		autoOpen: true,
+		modal: true,
+		width: 300,
+		height: 200,
+		buttons:{
+		Yes: function() {
+        $(this).dialog("close");
+		//alert("Choose ok"); 
+		cordova.plugins.exit();		
+        //myOkFunction();
+    },
+		No: function() {
+        $(this).dialog("close");
+        //myCancelFunction();
+		window.location.replace(baseURL +"index.html#exit");
+		//alert("Choose cancel");
+    }
+		},
+		show: {
+		effect: "slide",
+		duration: 200
+		},
+		hide: {
+		effect: "fade",
+		duration: 200
+		}	
+		});		
+	$( ".selector" ).dialog({
+		closeOnEscape: false
+		});
+  }   
+  function displayAlert(response) {
+ dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
+	document.getElementById("alertclass1").innerHTML=response;
+	  $( "#dialog" ).dialog({
+		autoOpen: true,
+		modal: true,
+		width: 300,
+		height: 200,
+		buttons: {
+		Ok: function() {
+		$( this ).dialog( "close" );
+		}
+		},
+		show: {
+		effect: "slide",
+		duration: 200
+		},
+		hide: {
+		effect: "fade",
+		duration: 200
+		}	
+		});		
+	$( ".selector" ).dialog({
+		closeOnEscape: false
+		});
+  } 
 </script>
 </body>
 </html>
