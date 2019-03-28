@@ -15,5 +15,5 @@
 <allow-intent href="*" />
 <allow-navigation href="*" />
 	<preference name="phonegap-version" value="cli-8.0.0" />
-	<preference name="android-targetSdkVersioin" value="23">
+	
 </widget>
