@@ -10,6 +10,7 @@
 	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
 	 <script src="js/jquery-ui.js"> </script>
 	<script type="text/javascript" src="cordova.js"></script> 
+	
  <script>
 	var serverURL="http://localhost/LSS/LSSserver/"; // The server address of the PHP files
 	var baseURL="http://localhost/LSS/";
@@ -71,7 +72,8 @@
 		<p>Press the button to log your current location</p>
 		<script>
 		$(document).ready(function(){		
-		$("#btnLogLocation").click(function(){		
+		$("#btnLogLocation").click(function(){
+			getCurrentLocation();		
 			logAlert("Are you sure you want to log?");
 		});	
 			
@@ -147,26 +149,37 @@
 	}
 	}
 	function getCurrentLocation(){
-	 navigator.geolocation.getCurrentPosition(success, error);
+	var options = {
+      enableHighAccuracy: true,
+      maximumAge: 3600000
+   }
+   var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+	var latitude="";
+	var longitude="";
+	var altitude="";
+	
+	function onSuccess(position) {
+		 latitude= position.coords.latitude;          
+         longitude= position.coords.longitude;
+         altitude= position.coords.altitude;
+	var params = {
+	ignoreSSLErrors: true /* BOOLEAN */,
+    useNTLM: false /* BOOLEAN */,
+    timeout: 60 /* NUMBER */,
+  url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
+  latitude +"," + longitude + "&key= AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI" /* STRING */,
 
-        function success(position) {
+	};
+	// result: JSON
+	var result = Resources["ContentLoaderFunctions"].GetJSON(params);
+	var rawJSON = result;
+	var LocationText = result.results[0].formatted_address;
+	alert ("Location is =  "+LocationText); 
+		};
+   function onError(error) {
+      alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
+   }
 
-            var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en';
-
-            $.getJSON(GEOCODING).done(function(location) {
-                $('#country').html(location.results[0].address_components[5].long_name);
-                $('#state').html(location.results[0].address_components[4].long_name);
-                $('#city').html(location.results[0].address_components[2].long_name);
-                $('#address').html(location.results[0].formatted_address);
-                $('#latitude').html(position.coords.latitude);
-                $('#longitude').html(position.coords.longitude);
-            })
-
-        }
-
-        function error(err) {
-            console.log(err)
-        }
 	}
 	function readFingerprint(){	
 		//document.addEventListener('deviceready', function () {
@@ -184,15 +197,15 @@
             password: "currentUserPassword",
             maxAttempts: 5,
             locale: "en_US",
-            dialogTitle: "Hey dude, your finger",
-            dialogMessage: "Put your finger on the device",
-            dialogHint: "No one will steal your identity, promised"
+            dialogTitle: "Scan Finger",
+            dialogMessage: "Kindly put your registered finger on the device",
+            dialogHint: "Ensure that you see the Successfully logged message "
         }; // See config object for required parameters
         // Set config and success callback
         FingerprintAuth.encrypt(encryptConfig, function(_fingerResult){
             console.log("successCallback(): " + JSON.stringify(_fingerResult));
             if (_fingerResult.withFingerprint) {
-                console.log("Successfully encrypted credentials.");
+                console.log("Successfully Successfully logged location.");
 		 alert("Successfully encrypted credentials.");
                 console.log("Encrypted credentials: " + result.token);
 			alert("Encrypted credentials: " + result.token);
