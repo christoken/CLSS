@@ -149,6 +149,7 @@
 	}
 	}
 	function getCurrentLocation(){
+	alert("starting current loc1");
 	var options = {
       enableHighAccuracy: true,
       maximumAge: 3600000
@@ -159,14 +160,16 @@
 	var altitude="";
 	
 	function onSuccess(position) {
+	alert("starting current loc2");
 		 latitude= position.coords.latitude;          
          longitude= position.coords.longitude;
          altitude= position.coords.altitude;
+		 alert("starting current loc1 latitude"+latitude);
 	var params = {
 	ignoreSSLErrors: true /* BOOLEAN */,
     useNTLM: false /* BOOLEAN */,
     timeout: 60 /* NUMBER */,
-  url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
+	url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
   latitude +"," + longitude + "&key= AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI" /* STRING */,
 
 	};
