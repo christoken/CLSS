@@ -9,6 +9,8 @@
 	</author>
 <icon src="images/Fingerprint.png" />
 	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
+	<gap:plugin name="cordova-plugin-android-fingerprint-auth" source="npm" />
+	
 <access origin="*" />
 <allow-intent href="*" />
 <allow-navigation href="*" />
