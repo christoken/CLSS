@@ -10,6 +10,8 @@
 	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
 	 <script src="js/jquery-ui.js"> </script>
 	<script type="text/javascript" src="cordova.js"></script> 
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?AIzaSyA2E0vmaArSYL8UH5-NFzYfMsx7QvGK6Lg&sensor=true"> </script>
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=3&key= AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI" ></script>
 	
  <script>
 	var serverURL="http://localhost/LSS/LSSserver/"; // The server address of the PHP files
@@ -73,7 +75,7 @@
 		<script>
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){
-			getCurrentLocation();		
+			CheckCurrentLocation();		
 			logAlert("Are you sure you want to log?");
 		});	
 			
@@ -123,9 +125,47 @@
 	</div>
 </div>
 <script>
-	function getPosition() {
-   
-}
+	function CheckCurrentLocation(){
+
+		if( navigator.geolocation )    {
+      var options={maximumAge:60000, timeout:5000, enableHighAccuracy:true };
+              navigator.geolocation.getCurrentPosition(success, fail);
+              }  
+        else  {          alert("Sorry, your browser does not support geolocation services.");  
+			}  
+			  }
+
+function success(position)  {
+     alert( "latitude :"+position.coords.latitude +", longititude : "+position.coords.longitude); 
+
+         var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            writeAddressName(userLatLng);
+   function writeAddressName(userLatLng) {
+          var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({
+          "location": userLatLng
+        },
+        function(results, status) {
+           if (status == google.maps.GeocoderStatus.OK)
+           {
+
+          alert("first address is : "+results[0].address_components[0].long_name);
+               alert("Street Name is : "+results[0].address_components[1].long_name);
+               alert("CityName  is : "+results[0].address_components[2].long_name);
+               alert("Dristic name is : "+results[0].address_components[3].long_name);
+               alert("State name is : "+results[0].address_components[4].long_name);
+               alert("Country name is : "+results[0].address_components[5].long_name);
+
+            }
+          else{
+            alert( "Unable to retrieve your address" );
+            }
+        });
+      }
+      function fail(){
+      alert(" Fail!, To find the location");
+      }
+      }
 	function watchPosition() {
 	var options = {
       maximumAge: 3600000,
@@ -170,8 +210,8 @@
     useNTLM: false /* BOOLEAN */,
     timeout: 60 /* NUMBER */,
 	url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
-  latitude +"," + longitude + "&key= AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI" /* STRING */,
-
+  latitude +"," + longitude + "&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI"+
+"&sensor=true";  /* STRING */
 	};
 	// result: JSON
 	var result = Resources["ContentLoaderFunctions"].GetJSON(params);
