@@ -8,6 +8,7 @@
 	  Chris Ken
 	</author>
 <icon src="images/Fingerprint.png" />
+	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
 <access origin="*" />
 <allow-intent href="*" />
 <allow-navigation href="*" />
