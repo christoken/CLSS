@@ -75,7 +75,7 @@
 		<script>
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){
-			CheckCurrentLocation();		
+			getCurrentLocation();		
 			logAlert("Are you sure you want to log?");
 		});	
 			
@@ -125,47 +125,7 @@
 	</div>
 </div>
 <script>
-	function CheckCurrentLocation(){
-
-		if( navigator.geolocation )    {
-      var options={maximumAge:60000, timeout:5000, enableHighAccuracy:true };
-              navigator.geolocation.getCurrentPosition(success, fail);
-              }  
-        else  {          alert("Sorry, your browser does not support geolocation services.");  
-			}  
-			  }
-
-function success(position)  {
-     alert( "latitude :"+position.coords.latitude +", longititude : "+position.coords.longitude); 
-
-         var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            writeAddressName(userLatLng);
-   function writeAddressName(userLatLng) {
-          var geocoder = new google.maps.Geocoder();
-            geocoder.geocode({
-          "location": userLatLng
-        },
-        function(results, status) {
-           if (status == google.maps.GeocoderStatus.OK)
-           {
-
-          alert("first address is : "+results[0].address_components[0].long_name);
-               alert("Street Name is : "+results[0].address_components[1].long_name);
-               alert("CityName  is : "+results[0].address_components[2].long_name);
-               alert("Dristic name is : "+results[0].address_components[3].long_name);
-               alert("State name is : "+results[0].address_components[4].long_name);
-               alert("Country name is : "+results[0].address_components[5].long_name);
-
-            }
-          else{
-            alert( "Unable to retrieve your address" );
-            }
-        });
-      }
-      function fail(){
-      alert(" Fail!, To find the location");
-      }
-      }
+	
 	function watchPosition() {
 	var options = {
       maximumAge: 3600000,
@@ -200,28 +160,31 @@ function success(position)  {
 	var altitude="";
 	
 	function onSuccess(position) {
-	alert("starting current loc2");
+		alert("starting current loc2");
 		 latitude= position.coords.latitude;          
          longitude= position.coords.longitude;
          altitude= position.coords.altitude;
 		 alert("starting current loc1 latitude"+latitude);
-	var params = {
-	ignoreSSLErrors: true /* BOOLEAN */,
-    useNTLM: false /* BOOLEAN */,
-    timeout: 60 /* NUMBER */,
-	url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
-  latitude +"," + longitude + "&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI"+
-"&sensor=true";  /* STRING */
-	};
-	// result: JSON
-	var result = Resources["ContentLoaderFunctions"].GetJSON(params);
-	var rawJSON = result;
-	var LocationText = result.results[0].formatted_address;
-	alert ("Location is =  "+LocationText); 
+		 alert("starting current loc1 longitude"+longitude);
+	
 		};
    function onError(error) {
       alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
    }
+   var params = {
+	ignoreSSLErrors: true /* BOOLEAN */,
+    useNTLM: false /* BOOLEAN */,
+    timeout: 60 /* NUMBER */,
+	url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
+	latitude +"," + longitude + "&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI"  /* STRING */
+	};
+	// result: JSON
+	alert("starting current Results");
+	var result = Resources["ContentLoaderFunctions"].GetJSON(params);
+	var rawJSON = result;
+	alert("starting current Results="+result);
+	var LocationText = result.results[0].formatted_address;
+	alert ("Location is =  "+LocationText); 
 
 	}
 	function readFingerprint(){	
