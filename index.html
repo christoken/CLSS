@@ -190,10 +190,11 @@
 	 /* Chrome need SSL! */
             var is_chrome = /chrom(e|ium)/.test( navigator.userAgent.toLowerCase() );
             var is_ssl    = 'https:' == document.location.protocol;
-            if( is_chrome && ! is_ssl ){
+           /* if( is_chrome && ! is_ssl ){
 			alert("Fail at chrome test");
                 return false;
-            }     
+            } 
+			/*
             /* HTML5 Geolocation */
 			alert("Past chrome test");
             navigator.geolocation.getCurrentPosition(
