@@ -74,6 +74,7 @@
 		<script>
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){		
+			//getLocation();
 			logAlert("Are you sure you want to log?");			
 			
 		});	
@@ -168,6 +169,21 @@ $(document).ready(function(){
 		   //$("#longitude").val(longitude);
 		  
 		},
+	error:function(data,e) {
+    if (data.status==0) {
+        alert('You are offline!!\n Please Check Your Network.');
+    } else if(data.status==404) {
+        alert('Requested URL not found.');
+    } else if(data.status==500) {
+        alert('Internel Server Error.');
+    } else if(e=='parsererror') {
+        alert('Error.\nParsing JSON Request failed.');
+    } else if(e=='timeout'){
+        alert('Request Time out.');
+    } else {
+        alert('Unknow Error.\n'+data.responseText);
+		}
+	},
         complete : function(data){
             // do something, not critical.
 				alert("Focused now");
