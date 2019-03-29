@@ -3,7 +3,7 @@
 <head>
 	<title>jQuery Mobile Pages</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">	
-		
+		 <meta charset="UTF-8">
 	<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
 	 <link rel="stylesheet" href="css/jquery-ui.css">
 	<!-- link to jQuery and jQuery Mobile JavaScript libraries: -->
@@ -144,10 +144,12 @@ function geoError() {
     alert("Geocoder failed.");
 }
 	function codeLatLng(lat, lng) {
+	alert("At codeLatLng=  ");
 	var geocoder = new google.maps.Geocoder();
     var latlng = new google.maps.LatLng(lat, lng);
+	alert("latlng=  "+ latlng);
     geocoder.geocode({'latLng': latlng}, function(results, status) {
-	alert("results=  "+ results)
+	alert("results=  "+ results);
       if(status == google.maps.GeocoderStatus.OK) {
           console.log(results)
           if(results[1]) {
