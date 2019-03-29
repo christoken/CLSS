@@ -74,8 +74,8 @@
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){
 		//	getCurrentLocation();	
-		findLocation();			
-			logAlert("Are you sure you want to log?");
+			getLocation();			
+			//logAlert("Are you sure you want to log?");
 		});	
 			
 				});
@@ -124,6 +124,40 @@
 	</div>
 </div>
 <script>
+	function getLocation() {
+    if(navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+	function geoSuccess(position) {
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
+    alert("lat:" + lat + " lng:" + lng);
+	codeLatLng(lat, lng);
+}
+function geoError() {
+    alert("Geocoder failed.");
+}
+	function codeLatLng(lat, lng) {
+geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(lat, lng);
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if(status == google.maps.GeocoderStatus.OK) {
+          console.log(results)
+          if(results[1]) {
+              //formatted address
+              var address = results[0].formatted_address;
+              alert("address = " + address);
+          } else {
+              alert("No results found");
+          }
+      } else {
+          alert("Geocoder failed due to: " + status);
+      }
+    });
+}
 	
 	function watchPosition() {
 	var options = {
