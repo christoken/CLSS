@@ -12,6 +12,8 @@
 	<gap:plugin name="cordova-plugin-android-fingerprint-auth" source="npm" />
 	<gap:plugin name="cordova-plugin-exitapp" source="npm" />
 	<gap:plugin name="cordova-plugin-geolocation" source="npm" />
+	<gap:plugin name="cordova-plugin-device" source="npm" />
+	
 	
 	
 <access origin="*" />
