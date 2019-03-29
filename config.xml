@@ -18,6 +18,10 @@
 <allow-intent href="*" />
 <allow-navigation href="*" />
 <allow-intent href="geo:*" />
+<access origin="*.google.com"/>
+<access origin="*.googleapis.com"/>
+<access origin="*.gstatic.com"/>
+	
 	<preference name="phonegap-version" value="cli-8.0.0" />
 	
 </widget>
