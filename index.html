@@ -137,14 +137,14 @@
 	function geoSuccess(position) {
     var lat = position.coords.latitude;
     var lng = position.coords.longitude;
-    alert("lat:" + lat + " lng:" + lng);
+    alert("lat:" + lat + " and lng:" + lng);
 	codeLatLng(lat, lng);
 }
 function geoError() {
     alert("Geocoder failed.");
 }
-function codeLatLng(lat, lng) {
-geocoder = new google.maps.Geocoder();
+	function codeLatLng(lat, lng) {
+	var geocoder = new google.maps.Geocoder();
     var latlng = new google.maps.LatLng(lat, lng);
     geocoder.geocode({'latLng': latlng}, function(results, status) {
 	alert("results=  "+ results)
