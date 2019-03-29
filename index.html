@@ -13,7 +13,7 @@
 	<script type="text/javascript" src="cordova.js"></script> 	
 	<script async defer src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver=3.exp"></script>
  <script>
-	var serverURL="http://localhost/LSS/LSSserver/"; // The server address of the PHP files
+	var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
 	var baseURL="http://localhost/LSS/";
  </script>
 </head>
@@ -73,23 +73,18 @@
 		<p>Press the button to log your current location</p>
 		<script>
 		$(document).ready(function(){		
-		$("#btnLogLocation").click(function(){
-		//	getCurrentLocation();	
-			getLocation();			
-			//logAlert("Are you sure you want to log?");
+		$("#btnLogLocation").click(function(){		
+			logAlert("Are you sure you want to log?");			
+			
 		});	
 			
 				});
 		</script>
 	<div id="locaDetails">
-		<p>Country: <span id="country"></span></p>
-		<p>State: <span id="state"></span></p>
-		<p>City: <span id="city"></span></p>
 		<p>Address: <span id="address"></span></p>
 		<p>Latitude: <span id="latitude"></span></p>
 		<p>Longitude: <span id="longitude"></span></p>
 	</div>
-	<div id="mapholder">Map</div>
 	
 	<div> <a data-role="button" data-icon="flat-settings" data-theme="d" id="btnLogLocation" >Log</a></div>
 	</div>
@@ -137,131 +132,51 @@
 	function geoSuccess(position) {
     var lat = position.coords.latitude;
     var lng = position.coords.longitude;
-    alert("lat:" + lat + " and lng:" + lng);
-	codeLatLng(lat, lng);
+     alert("lat:" + lat + " and lng:" + lng);
+	 getAddressFromServer(lat,lng);
+	//sent to server for interpretation 
+	//return back for display
+	//then log it if the user says yes
 }
 function geoError() {
     alert("Geocoder failed.");
 }
-	function codeLatLng(lat, lng) {
-	alert("At codeLatLng=  ");
-	var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(lat, lng);
-	alert("latlng=  "+ latlng);
-    geocoder.geocode({'latLng': latlng}, function(results, status) {
-	alert("results=  "+ results);
-      if(status == google.maps.GeocoderStatus.OK) {
-          console.log(results)
-          if(results[1]) {
-              //formatted address
-              var address = results[0].formatted_address;
-              alert("address = " + address);
-          } else {
-              alert("No results found");
-          }
-      } else {
-          alert("Geocoder failed due to: " + status);
-      }
+function getAddressFromServer(latitude,longitude){
+$(document).ready(function(){
+		alert("Here "+ latitude);
+		var url=serverURL +"getAddress.php";
+		//alert("Focused now");
+		$.ajax(
+		{	
+        // Post select to url.
+        type : 'post',
+        url : url,
+        dataType : 'json', // expected returned data format.
+        data : {
+		latitude:latitude,
+		longitude:longitude
+        },
+        success : function(data){		
+		alert(latitude+" and "+data.length +" and  "+data);	
+		document.getElementById("address").innerHTML=data;
+		document.getElementById("latitude").innerHTML=latitude;
+		document.getElementById("longitude").innerHTML=longitude;		
+		 // $("#locaDetails").val(data);
+		  // $("#latitude").val(latitude);
+		   //$("#longitude").val(longitude);
+		  
+		},
+        complete : function(data){
+            // do something, not critical.
+				//alert("Focused now");
+				//alert(data.length);
+			}
     });
-	}
-	
-	function watchPosition() {
-	var options = {
-      maximumAge: 3600000,
-      timeout: 3000,
-      enableHighAccuracy: true,
-   }
-   var watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
-   function onSuccess(position) {
-      alert('Latitude: '          + position.coords.latitude          + '\n' +
-         'Longitude: '         + position.coords.longitude         + '\n' +
-         'Altitude: '          + position.coords.altitude          + '\n' +
-         'Accuracy: '          + position.coords.accuracy          + '\n' +
-         'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-         'Heading: '           + position.coords.heading           + '\n' +
-         'Speed: '             + position.coords.speed             + '\n' +
-         'Timestamp: '         + position.timestamp                + '\n');
-	};
+	});
+}
 
-	function onError(error) {
-      alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
-	}
-	}
-	function getCurrentLocation(){
-	alert("starting current loc1");
-	var options = {
-      enableHighAccuracy: true,
-      maximumAge: 3600000
-   }
-   var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-	var latitude="";
-	var longitude="";
-	var altitude="";
-	
-	function onSuccess(position) {
-		alert("starting current loc2");
-		 latitude= position.coords.latitude;          
-         longitude= position.coords.longitude;
-         altitude= position.coords.altitude;
-		 alert("starting current loc1 latitude"+latitude);
-		 alert("starting current loc1 longitude"+longitude);
-	
-		};
-   function onError(error) {
-      alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
-   }
-   var params = {
-	ignoreSSLErrors: true /* BOOLEAN */,
-    useNTLM: false /* BOOLEAN */,
-    timeout: 60 /* NUMBER */,
-	url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
-	latitude +"," + longitude + "&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI"  /* STRING */
-	};
-	// result: JSON
-	alert("starting current Results");
-	var result = Resources["ContentLoaderFunctions"].GetJSON(params);
-	var rawJSON = result;
-	alert("starting current Results="+result);
-	var LocationText = result.results[0].formatted_address;
-	alert ("Location is =  "+LocationText); 
 
-	}
-	function findLocation(){
-	 /* Chrome need SSL! */
-            var is_chrome = /chrom(e|ium)/.test( navigator.userAgent.toLowerCase() );
-            var is_ssl    = 'https:' == document.location.protocol;
-           /* if( is_chrome && ! is_ssl ){
-			alert("Fail at chrome test");
-                return false;
-            } 
-			/*
-            /* HTML5 Geolocation */
-			alert("Past chrome test");
-            navigator.geolocation.getCurrentPosition(
-                function( position ){ // success cb     
-                    /* Current Coordinate */
-                    var lat = position.coords.latitude;
-                    var lng = position.coords.longitude;
-					alert("lat and  lng= "+lat + " AND "+lng);
-                    var google_map_pos = new google.maps.LatLng( lat, lng );     
-                    /* Use Geocoder to get address */
-                    var google_maps_geocoder = new google.maps.Geocoder();
-						alert("AT google_maps_geocoder");
-                    google_maps_geocoder.geocode(
-                        { 'latLng': google_map_pos 
-						},						
-                        function( results, status ) {
-                            if ( status == google.maps.GeocoderStatus.OK && results[0] ) {
-                                console.log( results[0].formatted_address );
-								alert( results[0].formatted_address );
-                            }
-                        }
-                    );
-                },
-                function(){ // fail cb
-                }
-            );
-	}
+	
 	function getDeviceDetails(){
 	  alert("Cordova version: " + device.cordova + "\n" +
       "Device model: " + device.model + "\n" +
@@ -269,6 +184,7 @@ function geoError() {
       "Device UUID: " + device.uuid + "\n" +
       "Device version: " + device.version);
 	}
+	
 	function readFingerprint(){	
 		//document.addEventListener('deviceready', function () {
 			alert("Device ready");
@@ -298,7 +214,7 @@ function geoError() {
                 console.log("Encrypted credentials: " + result.token);
 			alert("Encrypted credentials: " + result.token);
 			
-			getCurrentLocation();//Display the current possition				
+			 getLocation();//Display the current possition			
             
 			} else if (_fingerResult.withBackup) {
                 console.log("Authenticated with backup password");
