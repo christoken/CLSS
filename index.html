@@ -13,8 +13,8 @@
 	<script type="text/javascript" src="cordova.js"></script> 	
 	<script async defer src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver=3.exp"></script>
  <script>
-	var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
-	var baseURL="http://localhost/LSS/";
+	var serverURL="http://188.166.22.79/LSS/server/"; // The server address of the PHP files
+	var baseURL="http://188.166.22.79/LSS/";
  </script>
 </head>
 
@@ -143,6 +143,7 @@ function geoError() {
 }
 function getAddressFromServer(latitude,longitude){
 $(document).ready(function(){
+		var device=getDeviceDetails();
 		alert("Here "+ latitude);
 		var url=serverURL +"getAddress.php";
 		//alert("Focused now");
@@ -154,7 +155,8 @@ $(document).ready(function(){
         dataType : 'json', // expected returned data format.
         data : {
 		latitude:latitude,
-		longitude:longitude
+		longitude:longitude,
+		device:device
         },
         success : function(data){		
 		alert(latitude+" and "+data.length +" and  "+data);	
@@ -173,16 +175,10 @@ $(document).ready(function(){
 			}
     });
 	});
-}
-
-
-	
+}	
 	function getDeviceDetails(){
-	  alert("Cordova version: " + device.cordova + "\n" +
-      "Device model: " + device.model + "\n" +
-      "Device platform: " + device.platform + "\n" +
-      "Device UUID: " + device.uuid + "\n" +
-      "Device version: " + device.version);
+	  return  device.model +"_"+ device.uuid; 
+      
 	}
 	
 	function readFingerprint(){	
