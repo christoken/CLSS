@@ -143,7 +143,7 @@ function geoError() {
 }
 function getAddressFromServer(latitude,longitude){
 $(document).ready(function(){
-		var device=getDeviceDetails();
+		//var device=getDeviceDetails();
 		alert("Here "+ latitude);
 		var url=serverURL +"getAddress.php";
 		//alert("Focused now");
@@ -155,8 +155,8 @@ $(document).ready(function(){
         dataType : 'json', // expected returned data format.
         data : {
 		latitude:latitude,
-		longitude:longitude,
-		device:device
+		longitude:longitude
+		
         },
         success : function(data){		
 		alert(latitude+" and "+data.length +" and  "+data);	
