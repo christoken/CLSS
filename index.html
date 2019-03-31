@@ -120,7 +120,7 @@
 	function geoSuccess(position) {
     var lat = position.coords.latitude;
     var lng = position.coords.longitude;
-     alert("lat:" + lat + " and lng:" + lng);
+    // alert("lat:" + lat + " and lng:" + lng);
 	
 	var pfNumber=$("#locpf_Number").val();
 	 getAddressFromServer(lat,lng,pfNumber,fingerOrPin);
@@ -129,7 +129,7 @@
 	//then log it if the user says yes
 }
 function geoError() {
-    alert("Geocoder failed.");
+    displayAlert("Geocoder failed.");
 }
 	function getAddressFromServer(latitude,longitude,pfNumber,fingerOrPin){
 	$(document).ready(function(){
@@ -152,7 +152,7 @@ function geoError() {
 		fingerOrPin,fingerOrPin
         },
         success : function(data){		
-		alert(latitude+" and "+data.length +" and  "+data);	
+		//alert(latitude+" and "+data.length +" and  "+data);	
 		document.getElementById("address").innerHTML=data;
 		document.getElementById("latitude").innerHTML=latitude;
 		document.getElementById("longitude").innerHTML=longitude;
@@ -174,7 +174,7 @@ function geoError() {
 	},
         complete : function(data){
             // do something, not critical.
-				alert("Focused now");
+				//alert("Focused now");
 				//alert(data.length);
 			}
     });
@@ -187,10 +187,10 @@ function geoError() {
 	
 	function readFingerprint(){	
 		//document.addEventListener('deviceready', function () {
-			alert("Device ready");
+			//alert("Device ready");
 			FingerprintAuth.isAvailable(function (result) {
 			console.log("FingerprintAuth available: " + JSON.stringify(result));
-			alert("FingerprintAuth available: " + JSON.stringify(result));
+			//alert("FingerprintAuth available: " + JSON.stringify(result));
     
     // If has fingerprint device and has fingerprints registered
 		if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
@@ -210,7 +210,7 @@ function geoError() {
             //console.log("successCallback(): " + JSON.stringify(_fingerResult));
             if (_fingerResult.withFingerprint) {
                 //console.log("Successfully Successfully logged location.");
-				alert("Successfully encrypted credentials.");
+				//alert("Successfully encrypted credentials.");
             //console.log("Encrypted credentials: " + result.token);
 			//alert("Encrypted credentials: " + result.token);
 			fingerOrPin=0;
@@ -220,7 +220,7 @@ function geoError() {
 			fingerOrPin=1;
 			getLocation();
 			console.log("Authenticated with backup password");
-		    alert("Authenticated with backup password");
+		   // alert("Authenticated with backup password");
             }
         // Error callback
         }, function(err){
@@ -243,7 +243,7 @@ function geoError() {
 		*/
 	}, function (message) {
 		console.log("isAvailableError(): " + message);
-	   alert("isAvailableError(): " + message);
+	  // alert("isAvailableError(): " + message);
 		});
 	}	
 	function logAlert(msg) {
