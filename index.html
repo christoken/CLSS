@@ -62,11 +62,11 @@
 						'pfnumber':pfnumber
 			   },
 			success : function(data, textStatus, jqXHR){               
-				// alert(data);//"response" receives - whatever written in echo of above PHP script.
+				alert(data);//"response" receives - whatever written in echo of above PHP script.
 				var size= data.length;
 				//alert(data);
 				//alert(size);
-			if(size>6)  {						
+			if(data==="success")  {						
 			   storeSession(username,pfnumber);//call function to say if we are logged in									
 			   //window.location.href = baseURL +"index.html#homePage"; //direct to the homepage if login is successfull 
 			    window.location.replace(baseURL +"index.html#instructions") ;						
