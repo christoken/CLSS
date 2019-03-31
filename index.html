@@ -114,7 +114,7 @@
     if(navigator.geolocation) {
 	navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
         } else {
-            alert("Geolocation is not supported by this browser.");
+            displayAlert("Geolocation is not supported by this browser.");
         }
     }
 	function geoSuccess(position) {
@@ -135,7 +135,7 @@ function geoError() {
 	$(document).ready(function(){
 		var device=getDeviceDetails();
 		//var device="";
-		alert("serverURL ="+serverURL+" latitude= "+ latitude);
+		displayAlert("Watch out for the new location");
 		var url=serverURL +"getAddress.php";
 		//alert("Focused now");
 		$.ajax(
