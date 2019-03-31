@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html>
 <head>
-	<title>jQuery Mobile Pages</title>
+	<title>Supervision Mobile</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">	
 		 <meta charset="UTF-8">
 	<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
@@ -13,16 +13,112 @@
 	<script type="text/javascript" src="cordova.js"></script> 	
 	<script async defer src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver=3.exp"></script>
  <script>
+	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
+	//var baseURL="http://localhost/LSS/";
 	var serverURL="http://188.166.22.79/LSS/server/"; // The server address of the PHP files
 	var baseURL="http://188.166.22.79/LSS/";
+	var fingerOrPin=0;
+	//0 is fingerprint, 1 is pin.
  </script>
 </head>
 
-<body  style="display: instructions;">
+<body  onpageshow="checkonPageshow()"  style="display: mfloginPage;">
 	<div id="dialog" title="Location Log">
 		<p id="alertclass1">Location Log</p>
 	</div>
 	
+	<div data-role="page" id="mfloginPage">
+	<script>
+		$(document).ready(function(){
+   
+		$("#btnlogin").click(function(){
+			document.getElementById("loginerror").innerHTML="";
+			var username= $("#loginId").val();
+			var password=$("#loginPassword").val();
+			var pfnumber=$("#pfnumber").val();
+			
+			if(username=='' && password=='' && organization==''){
+			var response="Please fill out the required fields";
+			displayAlert(response);
+			//alert("Please fill out the form");
+			}
+			else if(username=='' && password!=='' && pfnumber!=='' ){alert('Username field is required')}
+			else if(password=='' && username!=='' && pfnumber!==''){alert('Password field is required')}
+			else if(password!=='' && username!=='' && pfnumber==''){alert('PF Number field is required')}
+			else{	
+			var url=serverURL + "loginmobile.php";
+			$.ajax(
+			{
+				// Post select to url.
+				"method" : 'post',
+				"url" : url,
+				async: true,
+				//crossDomain: true,
+				dataType : 'json', // expected returned data format.
+				
+				data : {
+						'username':username,
+						'password':password,
+						'pfnumber':pfnumber
+			   },
+			success : function(data, textStatus, jqXHR){               
+				// alert(data);//"response" receives - whatever written in echo of above PHP script.
+				var size= data.length;
+				//alert(data);
+				//alert(size);
+			if(size>6)  {						
+			   storeSession(username,pfnumber);//call function to say if we are logged in									
+			   //window.location.href = baseURL +"index.html#homePage"; //direct to the homepage if login is successfull 
+			    window.location.replace(baseURL +"index.html#instructions") ;						
+			  
+			}
+			else {
+			
+		var response="Loging error: Your login failed. Ensure that your email is verified, your password, username or organization is correct and that your trial period has not expired.";
+		displayAlert(response);				
+		document.getElementById("loginerror").innerHTML="Loging error: Your login failed. Ensure that your email is verified, your password, username or organization is correct and that your trial period has not expired.";
+				
+			    }
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					alert(errorThrown,textStatus );
+			},
+				complete : function(data){
+					// do something, not critical.
+			}
+			});
+		}
+		
+		});
+			
+		});
+   </script>
+
+	<!-- the div below is the home page's header -->
+	<div data-role="header">
+		<h1>Login page</h1>
+		
+	</div>
+
+	<!-- the div below is the home page's main content -->
+	<div data-role="content">
+		<p><h2>Enter Correct login details </h2></p>
+		
+		<div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="text" required="required" placeholder="PF Number" id="pfnumber" value="977672" maxlength="12"/></div>
+			<div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="text" required="required" placeholder="Username" id="loginId" value="chris" maxlength="12"/></div>
+            <div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="password" required="required" placeholder="Password" id="loginPassword" value="977672" maxlength="12"/></div>
+           <div class="ui-block"> <input data-role="button" type='submit' name='btnlogin' data-theme="d" id='btnlogin'   value="Login"/></div>
+			 <!-- <div class="ui-block"><a data-role="button" type="submit" required="required" data-icon="flat-settings" data-theme="d" id="btnlogin" >Login</a></div>--> 
+            <div id="loginerror"> </div>
+			<p id="onlinestatus"></p>
+		
+	</div>
+
+	<!-- the div below is the home page's footer -->
+	<div data-role="footer">
+		<h4>Supervision  &copy;Lavington Security Limited</h4>
+	</div>
+</div>
 <!-- the div below is a page - the home page -->
 <div data-role="page" id="instructions">
 
@@ -33,9 +129,10 @@
 	        <ul>
 	            <li><a href="#instructions" class="ui-btn-active ui-state-persist" data-icon="home">Instructions</a></li>
 	            <li><a href="#log" data-icon="star">Log</a></li>
-	            <li><a href="#exit" data-icon="info">Exit</a></li>
+	           <li><a onclick="exitAlert('Are you sure you want exit App?');">Exit</a></li>
 	        </ul>
 	    </div>
+		<h4 id="sessionText"></h4>
 	</div>
 
 	<!-- the div below is the home page's main content -->
@@ -65,7 +162,7 @@
 	        <ul>
 	            <li><a href="#instructions" data-icon="home">Instructions</a></li>
 	            <li><a href="#log" class="ui-btn-active ui-state-persist" data-icon="star">Log</a></li>
-	            <li><a href="#exit" data-icon="info">Exit</a></li>
+				<li><a onclick="exitAlert('Are you sure you want exit App?');">Exit</a></li>
 	        </ul>
 	    </div>
 	</div>
@@ -94,35 +191,77 @@
 	</div>
 </div>
 
-<!-- the div below is a page - the contact page -->
-<div data-role="page" id="exit">
-		<script>
-		$(document).ready(function(){		
-		$("#btnExitapp").click(function(){		
-		//alert("Clicked button");	
-			exitAlert("Are you sure you want exit App?");
-		});
-	});
-		</script>
-	<div data-role="header">
-		<h1>Exit</h1>
-		<div data-role="navbar">
-	        <ul>
-	            <li><a href="#instructions" data-icon="home">Instructions</a></li>
-	            <li><a href="#log" data-icon="star">Log</a></li>
-	            <li><a href="#exit" class="ui-btn-active ui-state-persist" data-icon="info">Exit</a></li>
-	        </ul>
-	    </div>
-	</div>
-	<div data-role="content">
-		<p>To exit this app, click the button</p>
-		<div> <a data-role="button" data-icon="flat-settings" data-theme="d" id="btnExitapp" >Exit</a></div>
-	</div>
-	<div data-role="footer">
-		<h4>Location Log  &copy;Lavington Security Limited</h4>
-	</div>
-</div>
+
 <script>
+	
+	function checkonPageshow(){// on click of back and forward button, we check if the login session is still active
+	console.log("Checking session ");	
+	try{
+	if (sessionStorage.getItem('usn')){		
+	var originalValue = JSON.parse(sessionStorage.getItem('usn')); //outputs null
+		if (originalValue == null){			
+			var urld2=baseURL +"index.html#mfloginPage";			
+			if(window.location.href==urld2)
+			{//do nothing
+			}else{
+				window.location.replace(baseURL +"index.html#mfloginPage");
+			} 
+		}
+		else{ //Stay on where you are  
+		//window.location.href = baseURL +"index.html";
+		}
+	}else{
+	//alert("2 "+window.location.href);
+			//console.log("2.2 "+window.location.href);
+			
+			var urld2=baseURL +"index.html#mfloginPage";			
+			if(window.location.href==urld2)
+			{
+			}else{
+			//console.log("3 "+window.location.href);	
+				window.location.replace(baseURL +"index.html#mfloginPage");
+				} 
+	}
+	}
+	catch(e){}
+	}
+	function storeSession(usn,pfnumber){	// a function to store the username session name and display who is logged in
+	 
+	 var username=JSON.stringify(usn);
+	 var pfnum=JSON.stringify(pfnumber);
+		 username=username.replace(/^"(.+(?="$))"$/, '$1');
+		pfnum=pfnum.replace(/^"(.+(?="$))"$/, '$1');
+	sessionStorage.setItem('usn',username);
+	sessionStorage.setItem('pf',pfnum);
+		//sessionStorage.setItem("usn",usn);
+		document.getElementById("sessionText").innerHTML=pfnumber +":  " + usn;
+	}
+	function clearSession(){
+  	 //clear the serverside session 
+		var url=serverURL + "logout.php";
+			$.ajax(
+			{// Post select to url.
+				"method" : 'post',
+				"url" : url,
+				async: true,
+				//crossDomain: true,
+				dataType : 'json', // expected returned data format.				
+				data : {						
+			   },
+				success : function(data, textStatus, jqXHR){  
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					alert(errorThrown,textStatus );
+			},
+				complete : function(data){					
+				sessionStorage.removeItem("usn");
+				sessionStorage.removeItem("pf");
+				document.getElementById("sessionText").innerHTML="";				
+				window.location.replace(baseURL +"index.html#mfloginPage");
+			}
+			});
+	 
+  }
 	function getLocation() {
     if(navigator.geolocation) {
 	navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
@@ -134,7 +273,8 @@
     var lat = position.coords.latitude;
     var lng = position.coords.longitude;
      alert("lat:" + lat + " and lng:" + lng);
-	 getAddressFromServer(lat,lng);
+	 var pfNumber=sessionStorage.getItem('pf');
+	 getAddressFromServer(lat,lng,pfNumber,fingerOrPin);
 	//sent to server for interpretation 
 	//return back for display
 	//then log it if the user says yes
@@ -142,9 +282,10 @@
 function geoError() {
     alert("Geocoder failed.");
 }
-function getAddressFromServer(latitude,longitude){
+function getAddressFromServer(latitude,longitude,pfNumber,fingerOrPin){
 $(document).ready(function(){
 		var device=getDeviceDetails();
+		//var device="";
 		alert("serverURL ="+serverURL+" latitude= "+ latitude);
 		var url=serverURL +"getAddress.php";
 		//alert("Focused now");
@@ -157,17 +298,15 @@ $(document).ready(function(){
         data : {
 		latitude:latitude,
 		longitude:longitude,
-		device:device
+		device:device,
+		pfNumber:pfNumber,
+		fingerOrPin,fingerOrPin
         },
         success : function(data){		
 		alert(latitude+" and "+data.length +" and  "+data);	
 		document.getElementById("address").innerHTML=data;
 		document.getElementById("latitude").innerHTML=latitude;
-		document.getElementById("longitude").innerHTML=longitude;		
-		 // $("#locaDetails").val(data);
-		  // $("#latitude").val(latitude);
-		   //$("#longitude").val(longitude);
-		  
+		document.getElementById("longitude").innerHTML=longitude;
 		},
 	error:function(data,e) {
     if (data.status==0) {
@@ -197,6 +336,7 @@ $(document).ready(function(){
       
 	}
 	
+	
 	function readFingerprint(){	
 		//document.addEventListener('deviceready', function () {
 			alert("Device ready");
@@ -219,28 +359,30 @@ $(document).ready(function(){
         }; // See config object for required parameters
         // Set config and success callback
         FingerprintAuth.encrypt(encryptConfig, function(_fingerResult){
-            console.log("successCallback(): " + JSON.stringify(_fingerResult));
+            //console.log("successCallback(): " + JSON.stringify(_fingerResult));
             if (_fingerResult.withFingerprint) {
-                console.log("Successfully Successfully logged location.");
-		 alert("Successfully encrypted credentials.");
-                console.log("Encrypted credentials: " + result.token);
-			alert("Encrypted credentials: " + result.token);
-			
+                //console.log("Successfully Successfully logged location.");
+				alert("Successfully encrypted credentials.");
+            //console.log("Encrypted credentials: " + result.token);
+			//alert("Encrypted credentials: " + result.token);
+			fingerOrPin=0;
 			 getLocation();//Display the current possition			
             
 			} else if (_fingerResult.withBackup) {
-                console.log("Authenticated with backup password");
+			fingerOrPin=1;
+			getLocation();
+			console.log("Authenticated with backup password");
 		    alert("Authenticated with backup password");
             }
         // Error callback
         }, function(err){
                 if (err === "Cancelled") {
                 console.log("FingerprintAuth Dialog Cancelled!");
-			 alert("FingerprintAuth Dialog Cancelled!");
+			 displayAlert("FingerprintAuth Dialog Cancelled!");
 			
             } else {
-                console.log("FingerprintAuth Error: " + err);
-		     alert("FingerprintAuth Error: " + err);
+             console.log("FingerprintAuth Error: " + err);
+		     displayAlert("FingerprintAuth Error: " + err);
             }
         });
     }
@@ -252,13 +394,10 @@ $(document).ready(function(){
 		*   }
 		*/
 	}, function (message) {
-    console.log("isAvailableError(): " + message);
+		console.log("isAvailableError(): " + message);
 	   alert("isAvailableError(): " + message);
 		});
-	//});	
-	
-	}
-	
+	}	
 	function logAlert(msg) {
 		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
 		document.getElementById("alertclass1").innerHTML=msg;
@@ -303,19 +442,18 @@ $(document).ready(function(){
 		width: 300,
 		height: 200,
 		buttons:{
+		
 		Yes: function() {
-        $(this).dialog("close");
-		//alert("Choose ok"); 
-		//cordova.plugins.exit();
-		navigator.app.exitApp();		
-        //myOkFunction();
-    },
-		No: function() {
-        $(this).dialog("close");
-        //myCancelFunction();
-		window.location.replace(baseURL +"index.html#exit");
-		//alert("Choose cancel");
-    }
+			$(this).dialog("close");		
+			clearSession();//call the clear session before killing the app
+			navigator.app.exitApp();        
+		},
+			No: function() {
+			$(this).dialog("close");
+			//myCancelFunction();
+			window.location.replace(baseURL +"index.html#log");
+			//alert("Choose cancel");
+			}
 		},
 		show: {
 		effect: "slide",
@@ -330,6 +468,7 @@ $(document).ready(function(){
 		closeOnEscape: false
 		});
   }   
+	
 	function displayAlert(response) {
 	dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
 	document.getElementById("alertclass1").innerHTML=response;
