@@ -138,13 +138,13 @@ var lat;
         function(results, status) {		
           if (status == google.maps.GeocoderStatus.OK){
 		   //address=results[0].formatted_address;
-           displayAlert(results[0].formatted_address);
+           //displayAlert(results[0].formatted_address);
 		   document.getElementById("address").innerHTML=results[0].formatted_address;
 		   acAddress=results[0].formatted_address;
 		   var telNo=$("#loc_telNo").val();
 		   getAddressFromServer(telNo,lat,lng,fingerOrPin,acAddress);
-		   alert("address="+acAddress);
-		alert(document.getElementById("address").innerHTML);
+		   //alert("address="+acAddress);
+		//alert(document.getElementById("address").innerHTML);
 			
 			}
           else
