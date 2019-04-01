@@ -48,8 +48,9 @@
 	<div data-role="content">
 		<p>How to use this App</p>
 		<ol>
-		<li> Launch the application on your phone </li>
-		<li> Go to to Log menu </li>
+		<li> Launch the application on your phone </li>		
+		<li> Go to Log menu </li>
+		<li> Enter your PF Number</li>
 		<li> Put your registered finger on the scanner </li>
 		<li> Confirm if you wish to log the location</li>
 		<li> Clear and exit the application</li>
@@ -94,7 +95,7 @@
 		</script>
 	<div id="locaDetails">
 		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="PF Number" id="locpf_Number"/></div>
-		<p>Address: <span id="address"></span></p>
+		<!--<p>Address: <span id="address"></span></p> -->
 		<p>Latitude: <span id="latitude"></span></p>
 		<p>Longitude: <span id="longitude"></span></p>
 	</div>
@@ -153,7 +154,7 @@ function geoError() {
         },
         success : function(data){		
 		//alert(latitude+" and "+data.length +" and  "+data);	
-		document.getElementById("address").innerHTML=data;
+		//document.getElementById("address").innerHTML=data;
 		document.getElementById("latitude").innerHTML=latitude;
 		document.getElementById("longitude").innerHTML=longitude;
 		},
