@@ -11,14 +11,14 @@
 	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
 	 <script src="js/jquery-ui.js"> </script>
 	<script type="text/javascript" src="cordova.js"></script> 	
-	<script async defer src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver=3.exp"></script>
+	<!--<script async defer src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver=3.exp"></script> -->
 	<script src="http://maps.google.com/maps/api/js?key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver&sensor=true"></script>
  <script>
 	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
 	//var baseURL="http://localhost/LSS/";
 	var serverURL="http://188.166.22.79/LSS/server/"; // The server address of the PHP files
 	var baseURL="http://188.166.22.79/LSS/";
-	//var fingerOrPin=0;
+	var fingerOrPin=0;
 	//0 is fingerprint, 1 is pin.
  </script>
 </head>
@@ -51,7 +51,7 @@
 		<ol>
 		<li> Launch the application on your phone </li>		
 		<li> Go to Log menu </li>
-		<li> Enter your PF Number</li>
+		<li> Enter your Phone Number</li>
 		<li> Put your registered finger on the scanner </li>
 		<li> Confirm if you wish to log the location</li>
 		<li> Clear and exit the application</li>
@@ -81,14 +81,12 @@
 		<p>Press the button to log your current location</p>
 		<script>
 		$(document).ready(function(){		
-		$("#btnLogLocation").click(function(){		
-			
-			if($("#locpf_Number").val()!=''){
-			//logAlert("Are you sure you want to log?");
-			getLocation();
-			
+		$("#btnLogLocation").click(function(){			
+			if($("#loc_telNo").val()!=''){
+			logAlert("Are you sure you want to log?");
+			//getLocation();
 	}else {
-		displayAlert("You need to enter your PF Number to proceed");
+		displayAlert("You need to enter your Tel # to proceed");
 	return;
 	}			
 			
@@ -97,8 +95,8 @@
 				});
 		</script>
 	<div id="locaDetails">
-		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="PF Number" id="locpf_Number"/></div>
-		<!--<p>Address: <span id="address"></span></p> -->
+		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Tel No:" id="loc_telNo"/></div>
+		<p>Address: <span id="address"></span></p>
 		<p>Latitude: <span id="latitude"></span></p>
 		<p>Longitude: <span id="longitude"></span></p>
 	</div>
@@ -109,11 +107,7 @@
 		<h4>Location Log  &copy;Lavington Security Limited</h4>
 	</div>
 </div>
-
-
-<script>
-	
-	
+<script>	
 	function getLocation() {
     if(navigator.geolocation) {
 	navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
@@ -127,43 +121,36 @@
     // alert("lat:" + lat + " and lng:" + lng);
 	var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         // Write the formatted address
-        writeAddressName(userLatLng);	
-	var pfNumber=$("#locpf_Number").val();
-	 getAddressFromServer(lat,lng,pfNumber,fingerOrPin);
+        var address= returnAddress(userLatLng);	
+		var telNo=$("#loc_telNo").val();
+	   getAddressFromServer(lat,lng,telNo,fingerOrPin,address);
 	//sent to server for interpretation 
 	//return back for display
 	//then log it if the user says yes
 	}
-	function writeAddressName(latLng) {
-        var geocoder = new google.maps.Geocoder();
+	function returnAddress(latLng) {
+		var address;       
+	   var geocoder = new google.maps.Geocoder();
         geocoder.geocode({
           "location": latLng
         },
         function(results, status) {
           if (status == google.maps.GeocoderStatus.OK)
+		   {address=results[0].formatted_address;
             displayAlert(results[0].formatted_address);
+			}
           else
              displayAlert("Unable to retrieve your address") ;
         });
+		return address;
       }
-
-function initializeCurrent(latcurr, longcurr) {
-   currgeocoder = new google.maps.Geocoder();
-   console.log(latcurr + "-- ######## --" + longcurr);
-   if (latcurr != '' && longcurr != '') {
-       var myLatlng = new google.maps.LatLng(latcurr, longcurr);
-       return getCurrentAddress(myLatlng);
-    }
-}
 function geoError() {
     displayAlert("Geocoder failed.");
 }
-	function getAddressFromServer(latitude,longitude,pfNumber,fingerOrPin){
+	function getAddressFromServer(latitude,longitude,pfNumber,fingerOrPin,address){
 	$(document).ready(function(){
-		var device=getDeviceDetails();
-		//var device="";
-		displayAlert("Watch out for the new location");
-		var url=serverURL +"getAddress.php";
+		var device=getDeviceDetails();				
+		var url=serverURL +"saveLogDetails.php";
 		//alert("Focused now");
 		$.ajax(
 		{	
@@ -175,14 +162,16 @@ function geoError() {
 		latitude:latitude,
 		longitude:longitude,
 		device:device,
-		pfNumber:pfNumber,
-		fingerOrPin,fingerOrPin
+		telNo:telNo,
+		fingerOrPin:fingerOrPin,
+		address:address
         },
         success : function(data){		
 		alert(latitude+" and "+data.length +" and  "+data);	
-		//document.getElementById("address").innerHTML=data;
+		document.getElementById("address").innerHTML=address;
 		document.getElementById("latitude").innerHTML=latitude;
 		document.getElementById("longitude").innerHTML=longitude;
+		displayAlert("You are done logging this location");
 		},
 	error:function(data,e) {
     if (data.status==0) {
@@ -208,8 +197,7 @@ function geoError() {
 	});
 }	
 	function getDeviceDetails(){
-	  return  device.model +"_"+ device.uuid; 
-      
+	  return  device.model +"_"+ device.uuid;      
 	}
 	
 	function readFingerprint(){	
