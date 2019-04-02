@@ -113,7 +113,7 @@
 	function getLocation() {
 		if(navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
-			geoSuccess, geoError, {maximumAge:600000, timeout:5000, enableHighAccuracy: true}
+			geoSuccess, geoError, {maximumAge:600000, timeout:100000, enableHighAccuracy: true}
 			);
 			} else {
 				displayAlert("Geolocation is not supported by this browser.");
