@@ -13,6 +13,8 @@
 	<gap:plugin name="cordova-plugin-exitapp" source="npm" />
 	<gap:plugin name="cordova-plugin-geolocation" source="npm" />
 	<gap:plugin name="cordova-plugin-device" source="npm" />
+	<gap:plugin name="cordova-plugin-sim" source="npm" />
+	
 	
 	
 	
