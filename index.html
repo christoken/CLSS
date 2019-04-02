@@ -162,7 +162,7 @@ function geoError(error) {
         navigator.geolocation.getCurrentPosition(
                geoSuccess, 
                errorCallback_lowAccuracy,
-               {maximumAge:600000, timeout:10000, enableHighAccuracy: false});
+               {maximumAge:0, timeout:10000, enableHighAccuracy: false});
         return;    
 }
  var msg = "<p>Can't get your location (high accuracy attempt). Error = ";
