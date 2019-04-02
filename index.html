@@ -359,6 +359,10 @@ function simInfosuccessCallback(result) {
             }
         });
     }
+else {
+alert ("Fingerprint availability erro: Available= "+ result.isAvailable + "  Enrolled=  " +result.hasEnrolledFingerprints + "isHardwareDetected= "+ result.isHardwareDetected);
+
+ }
 		/**
 		* @return {
 		*      isAvailable:boolean,
