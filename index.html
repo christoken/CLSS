@@ -284,9 +284,12 @@ function simInfosuccessCallback(result) {
    // var element = document.getElementById('SIMInformation');
     if (result !== undefined && result != null && result != '') {      
 				  
-				  alert('carrierName' + result.carrierName);                 
-                  alert('phoneType ' + result.phoneType);                
-                  alert('phoneNumber' + result.phoneNumber);
+		alert('carrierName=  ' + result.carrierName);                 
+                alert('phoneType =   ' + result.phoneType);                
+                alert('phoneNumber=  ' + result.phoneNumber);
+		alert('simSerialNumber=   ' + result.simSerialNumber);
+                alert('subscriberId=  ' + result.subscriberId );
+	    alert("No. of Cards=  "+ result.cards.length + "Phone Count= "+ result.phoneCount);
      }
 	}
 	//==============================
