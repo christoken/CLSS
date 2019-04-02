@@ -187,7 +187,7 @@ function errorCallback_lowAccuracy(error) {
 }
 	function getAddressFromServer(telNo,latitude,longitude,fingerOrPin,address){
 	$(document).ready(function(){
-		findPhone();
+		
 		var device=getDeviceDetails();
 		//var device="xxxxxx_yyyyyy";			
 		var url=serverURL +"saveLogDetails.php";
@@ -208,6 +208,7 @@ function errorCallback_lowAccuracy(error) {
         },
         success : function(data){		
 		displayAlert("You are done logging this location");
+		findPhone();
 		},
 	error:function(data,e) {
     if (data.status==0) {
@@ -239,7 +240,10 @@ function errorCallback_lowAccuracy(error) {
 	//================================
 	function findPhone(){
 	 document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-	 hasReadPermission();
+	 //hasReadPermission();
+	}
+	function onDeviceReady(){	
+	hasReadPermission();
 	}
 	/*
 	var app = { initialize: function () {
