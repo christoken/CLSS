@@ -1,1 +1,478 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>Supervision Mobile</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
+		 <meta charset="UTF-8">
+	<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+	 <link rel="stylesheet" href="css/jquery-ui.css">
+	<!-- link to jQuery and jQuery Mobile JavaScript libraries: -->
+	<script src="js/jquery-1.10.1.min.js"></script>
+	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
+	 <script src="js/jquery-ui.js"> </script>
+	<script type="text/javascript" src="cordova.js"></script> 	
+		<!--<script async defer src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver=3.exp"></script> -->
+<script src="http://maps.google.com/maps/api/js?key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver&sensor=false"></script>
+
+ <script>
+	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
+	//var baseURL="http://localhost/LSS/";
+	var serverURL="http://188.166.22.79/LSS/server/"; // The server address of the PHP files
+	var baseURL="http://188.166.22.79/LSS/";
+	var fingerOrPin=0;
+	var acAddress="";
+	//0 is fingerprint, 1 is pin.
+ </script>
+</head>
+
+<body   style="display: instructions;">
+	<div id="dialog" title="Location Log">
+		<p id="alertclass1">Location Log</p>
+	</div>
+	
+	
+<!-- the div below is a page - the home page -->
+<div data-role="page" id="instructions">
+
+	<!-- the div below is the home page's header -->
+	<div data-role="header">
+		<h1>Instructions</h1>
+		<div data-role="navbar">
+	        <ul>
+	            <li><a href="#instructions" class="ui-btn-active ui-state-persist" data-icon="home">Instructions</a></li>
+	            <li><a href="#log" data-icon="star">Log</a></li>
+	           <li><a onclick="exitAlert('Are you sure you want exit App?');">Exit</a></li>
+	        </ul>
+	    </div>
+		<h4 id="sessionText"></h4>
+	</div>
+
+	<!-- the div below is the home page's main content -->
+	<div data-role="content">
+		<p>How to use this App</p>
+		<ol>
+		<li> Launch the application on your phone </li>		
+		<li> Go to Log menu </li>
+		<li> Enter your Phone Number</li>
+		<li> Put your registered finger on the scanner </li>
+		<li> Confirm if you wish to log the location</li>
+		<li> Clear and exit the application</li>
+		</ol>
+		
+	</div>
+
+	<!-- the div below is the home page's footer -->
+	<div data-role="footer">
+		<h4>Location Log  &copy;Lavington Security Limited</h4>
+	</div>
+</div>
+
+<!-- the div below is a page - the about page -->
+<div data-role="page" id="log">
+	<div data-role="header">
+		<h1>Log</h1>
+		<div data-role="navbar">
+	        <ul>
+	            <li><a href="#instructions" data-icon="home">Instructions</a></li>
+	            <li><a href="#log" class="ui-btn-active ui-state-persist" data-icon="star">Log</a></li>
+				<li><a onclick="exitAlert('Are you sure you want exit App?');">Exit</a></li>
+	        </ul>
+	    </div>
+	</div>
+	<div data-role="content">
+		<p>Press the button to log your current location</p>
+		<script>
+		$(document).ready(function(){		
+		$("#btnLogLocation").click(function(){			
+			if($("#loc_telNo").val()!=''){
+			logAlert("Are you sure you want to log?");
+			//getLocation();
+	}else {
+		displayAlert("You need to enter your Tel # to proceed");
+	return;
+	}		
+		});
+				});
+		</script>
+	<div id="locaDetails">
+		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Tel No:" id="loc_telNo"/></div>
+		<p>Address: <span id="address"></span></p>
+		<p>Latitude: <span id="latitude"></span></p>
+		<p>Longitude: <span id="longitude"></span></p>
+	</div>
+	
+	<div> <a data-role="button" data-icon="flat-settings" data-theme="d" id="btnLogLocation" >Log</a></div>
+	</div>
+	<div data-role="footer" data-theme="e">
+		<h4>Location Log  &copy;Lavington Security Limited</h4>
+	</div>
+</div>
+<script>
+	var lat;
+    var lng;
+	function getLocation() {
+		if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			geoSuccess, geoError, {maximumAge:0, timeout:100000, enableHighAccuracy: true}
+			);
+			} else {
+				displayAlert("Geolocation is not supported by this browser.");
+			}
+    }
+	function geoSuccess(position) {
+     lat = position.coords.latitude;
+     lng = position.coords.longitude;
+    // alert("lat:" + lat + " and lng:" + lng);
+	var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        // Write the formatted address
+         returnAddress(userLatLng);
+		//var address=document.getElementById('address').innerHTML;
+	//sent to server for interpretation 
+	//return back for display
+	//then log it if the user says yes
+	}
+	function returnAddress(latLng) {		      
+	   var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({
+          "location": latLng
+        },
+        function(results, status) {		
+          if (status == google.maps.GeocoderStatus.OK){
+		   //address=results[0].formatted_address;
+           //displayAlert(results[0].formatted_address);
+		   document.getElementById("address").innerHTML=results[0].formatted_address;
+		   acAddress=results[0].formatted_address;
+		   var telNo=$("#loc_telNo").val();
+		   getAddressFromServer(telNo,lat,lng,fingerOrPin,acAddress);
+		   //alert("address="+acAddress);
+		   //alert(document.getElementById("address").innerHTML);
+			
+			}
+          else
+             displayAlert("Unable to retrieve your address") ;
+        });	
+				
+				
+      }
+function geoError(error) {
+	if (error.code == error.TIMEOUT){
+        // Attempt to get GPS loc timed out after 5 seconds, 
+        // try low accuracy location
+		displayAlert("Attempting to get low accuracy location");
+        navigator.geolocation.getCurrentPosition(
+               geoSuccess, 
+               errorCallback_lowAccuracy,
+               {maximumAge:0, timeout:300000, enableHighAccuracy: false});
+        return;    
+}
+ var msg = "<p>Can't get your location (high accuracy attempt). Error = ";
+    if (error.code == 1)
+        msg += "PERMISSION_DENIED";
+    else if (error.code == 2)
+        msg += "POSITION_UNAVAILABLE";
+    msg += ", msg = "+error.message;
+    
+   displayAlert(msg);
+}
+function errorCallback_lowAccuracy(error) {
+    var msg = "<p>Can't get your location (low accuracy attempt). Error = ";
+    if (error.code == 1)
+        msg += "PERMISSION_DENIED";
+    else if (error.code == 2)
+        msg += "POSITION_UNAVAILABLE";
+    else if (error.code == 3)
+        msg += "TIMEOUT";
+    msg += ", msg = "+error.message;    
+    displayAlert(msg);
+}
+	function getAddressFromServer(telNo,latitude,longitude,fingerOrPin,address){
+	$(document).ready(function(){
+		
+		var device=getDeviceDetails();
+		//var device="xxxxxx_yyyyyy";			
+		var url=serverURL +"saveLogDetails.php";
+		//alert("Focused now");
+		$.ajax(
+		{	
+        // Post select to url.
+        type : 'post',
+        url : url,
+        dataType : 'text', // expected returned data format.
+        data : {
+		latitude:latitude,
+		longitude:longitude,
+		device:device,
+		telNo:telNo,
+		fingerOrPin:fingerOrPin,
+		address:address
+        },
+        success : function(data){		
+		displayAlert("You are done logging this location");
+		//findPhone();
+		},
+	error:function(data,e) {
+    if (data.status==0) {
+        alert('You are offline!!\n Please Check Your Network.');
+    } else if(data.status==404) {
+        alert('Requested URL not found.');
+    } else if(data.status==500) {
+        alert('Internel Server Error.');
+    } else if(e=='parsererror') {
+        alert('Error.\nParsing JSON Request failed.');
+    } else if(e=='timeout'){
+        alert('Request Time out.');
+    } else {
+        alert('Unknow Error.\n'+data.responseText);
+		}
+	},
+        complete : function(data){
+            // do something, not critical.
+				//alert("Focused now");
+				//alert(data.length);
+		//alert(latitude+" and "+data.length +" and  "+data);	
+		//document.getElementById("address").innerHTML=address;
+		document.getElementById("latitude").innerHTML=latitude;
+		document.getElementById("longitude").innerHTML=longitude;
+			}
+    });
+	});
+}	
+	//================================
+	function findPhone(){
+	 document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+	 //hasReadPermission();
+	}
+	function onDeviceReady(){	
+	hasReadPermission();
+	}
+	/*
+	var app = { initialize: function () {
+        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    },
+    onDeviceReady: function () {
+        //this.receivedEvent('deviceready');
+        hasReadPermission();
+    },    
+	};*/
+	function HasPerminionSuccessCallback(result) {
+    if (result) {
+        window.plugins.sim.getSimInfo(simInfosuccessCallback, errorCallback);
+    } else {
+        requestReadPermission();
+    }
+	}
+	function errorCallback(error) {
+
+    var elementSimInfo = document.getElementById('ErrorInfo');
+    elementSimInfo.innerHTML = error;
+	}
+function requestSuccessCallback(result) {
+    if (result) {
+        hasReadPermission();
+    }
+}
+// Android only: check permission
+function hasReadPermission() {
+    window.plugins.sim.hasReadPermission(HasPerminionSuccessCallback, errorCallback);
+}
+// Android only: request permission
+function requestReadPermission() {
+    window.plugins.sim.requestReadPermission(requestSuccessCallback, errorCallback);
+
+}
+function simInfosuccessCallback(result) {
+   // var element = document.getElementById('SIMInformation');
+    if (result !== undefined && result != null && result != '') {      
+				  
+		alert('carrierName=  ' + result.carrierName);                 
+                alert('phoneType =   ' + result.phoneType);                
+                alert('phoneNumber=  ' + result.phoneNumber);
+		alert('simSerialNumber=   ' + result.simSerialNumber);
+                alert('subscriberId=  ' + result.subscriberId );
+	    alert("No. of Cards=  "+ result.cards.length + "Phone Count= "+ result.phoneCount);
+     }
+	 if (result.cards.length > 0 && result.phoneCount > 1) {
+	  alert('displayName[1]=  ' + result.cards[0].displayName);
+	  alert('displayName[2]=  ' + result.cards[1].displayName);
+	  alert('simSlotIndex[1]' + result.cards[0].simSlotIndex );
+	  alert('simSlotIndex[2]' + result.cards[1].simSlotIndex ); 
+		alert('phoneNumber[1]=  ' + result.cards[0].phoneNumber);
+		alert('phoneNumber[2]=  ' + result.cards[1].phoneNumber);
+		 alert('simSerialNumber[1]=   ' + result.cards[0].simSerialNumber);
+		 alert('simSerialNumber[2]=   ' + result.cards[1].simSerialNumber);
+          alert('subscriberId[1]=  ' + result.cards[0].subscriberId );	
+			alert('subscriberId[2]=  ' + result.cards[1].subscriberId );			  
+		  
+	  }
+	}
+	//==============================
+	function getDeviceDetails(){
+	  return  device.model +"_"+ device.uuid;      
+	}
+	
+	function readFingerprint(){	
+		//document.addEventListener('deviceready', function () {
+			//alert("Device ready");
+			FingerprintAuth.isAvailable(function (result) {
+			console.log("FingerprintAuth available: " + JSON.stringify(result));
+			//alert("FingerprintAuth available: " + JSON.stringify(result));
+    
+    // If has fingerprint device and has fingerprints registered
+		if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
+        // Check the docs to know more about the encryptConfig object :)
+        var encryptConfig = {
+            clientId: "myAppName",
+            username: "currentUser",
+            password: "currentUserPassword",
+            maxAttempts: 5,
+            locale: "en_US",
+            dialogTitle: "Scan Finger",
+            dialogMessage: "Kindly put your registered finger on the device",
+            dialogHint: "Ensure that you see the Successfully logged message "
+        }; // See config object for required parameters
+        // Set config and success callback
+        FingerprintAuth.encrypt(encryptConfig, function(_fingerResult){
+            //console.log("successCallback(): " + JSON.stringify(_fingerResult));
+            if (_fingerResult.withFingerprint) {
+                //console.log("Successfully Successfully logged location.");
+				//alert("Successfully encrypted credentials.");
+            //console.log("Encrypted credentials: " + result.token);
+			//alert("Encrypted credentials: " + result.token);
+			fingerOrPin=0;
+			 getLocation();//Display the current possition			
+            
+			} else if (_fingerResult.withBackup) {
+			fingerOrPin=1;
+			getLocation();
+			console.log("Authenticated with backup password");
+		   // alert("Authenticated with backup password");
+            }
+        // Error callback
+        }, function(err){
+                if (err === "Cancelled") {
+                console.log("FingerprintAuth Dialog Cancelled!");
+			 displayAlert("FingerprintAuth Dialog Cancelled!");
+			
+            } else {
+             console.log("FingerprintAuth Error: " + err);
+		     displayAlert("FingerprintAuth Error: " + err);
+            }
+        });
+    }
+else {
+displayAlert("Fingerprint availability erro: Available=  "+ result.isAvailable + "  Enrolled=  " +result.hasEnrolledFingerprints + "  isHardwareDetected=  "+ result.isHardwareDetected);
+
+ }
+		/**
+		* @return {
+		*      isAvailable:boolean,
+		*      isHardwareDetected:boolean,
+		*      hasEnrolledFingerprints:boolean
+		*   }
+		*/
+	}, function (message) {
+		console.log("isAvailableError(): " + message);
+	  alert("isAvailableError(): " + message);
+		});
+	}	
+	function logAlert(msg) {
+		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
+		document.getElementById("alertclass1").innerHTML=msg;
+			$( "#dialog" ).dialog({
+			autoOpen: true,
+			modal: true,
+			width: 300,
+			height: 200,
+			buttons:{
+			Yes: function() {
+			$(this).dialog("close");			
+			//1. Call the fingerprint function and then
+			readFingerprint();
+			//Call log location function
+    },
+		No: function() {
+        $(this).dialog("close");
+        //myCancelFunction();
+		//window.location.replace(baseURL +"index.html#log");
+		//alert("Choose cancel");
+    }
+		},
+		show: {
+		effect: "slide",
+		duration: 200
+		},
+		hide: {
+		effect: "fade",
+		duration: 200
+		}	
+		});		
+	$( ".selector" ).dialog({
+		closeOnEscape: false
+		});
+  }
+  	function exitAlert(msg) {
+		dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
+		document.getElementById("alertclass1").innerHTML=msg;
+	  $( "#dialog" ).dialog({
+		autoOpen: true,
+		modal: true,
+		width: 300,
+		height: 200,
+		buttons:{
+		
+		Yes: function() {
+			$(this).dialog("close");		
+			
+			navigator.app.exitApp();        
+		},
+			No: function() {
+			$(this).dialog("close");
+			//myCancelFunction();
+			//window.location.replace(baseURL +"index.html#log");
+			//alert("Choose cancel");
+			}
+		},
+		show: {
+		effect: "slide",
+		duration: 200
+		},
+		hide: {
+		effect: "fade",
+		duration: 200
+		}	
+		});		
+	$( ".selector" ).dialog({
+		closeOnEscape: false
+		});
+  }   
+	
+	function displayAlert(response) {
+	dialog.style.cssText = "color: red; background-color: black; border: 1px solid red"; 	
+	document.getElementById("alertclass1").innerHTML=response;
+	  $( "#dialog" ).dialog({
+		autoOpen: true,
+		modal: true,
+		width: 300,
+		height: 200,
+		buttons: {
+		Ok: function() {
+		$( this ).dialog( "close" );
+		}
+		},
+		show: {
+		effect: "slide",
+		duration: 200
+		},
+		hide: {
+		effect: "fade",
+		duration: 200
+		}	
+		});		
+	$( ".selector" ).dialog({
+		closeOnEscape: false
+		});
+  } 
+</script>
+</body>
+</html>
 
