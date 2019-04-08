@@ -84,15 +84,20 @@
 		<script>
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){
-		findPhone();
-		//alert('SIm1=  ' + simSerial1 + 'Sim 2=  '+simSerial2);				
+			if($("#loc_telNo").val()!=''){
+			findPhone();
 			logAlert("Are you sure you want to log?");
 			//getLocation();
+		}else {
+			displayAlert("You need to enter your Tel # to proceed");
+		return;
+		}
+	
 		});
-				});
+	});
 		</script>
 	<div id="locaDetails">
-		
+		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Tel No:" id="loc_telNo"/></div>
 		<p>Address: <span id="address"></span></p>
 		<p>Latitude: <span id="latitude"></span></p>
 		<p>Longitude: <span id="longitude"></span></p>
@@ -136,8 +141,8 @@
           if (status == google.maps.GeocoderStatus.OK){		   
 		   document.getElementById("address").innerHTML=results[0].formatted_address;
 		   acAddress=results[0].formatted_address;
-		  
-		   getAddressFromServer(simSerial1,simSerial1,lat,lng,fingerOrPin,acAddress);   
+		   var telNo=$("#loc_telNo").val();
+		   getAddressFromServer(telNo,simSerial1,simSerial1,lat,lng,fingerOrPin,acAddress);   
 			
 			}
           else
@@ -177,7 +182,7 @@
     msg += ", msg = "+error.message;    
     displayAlert(msg);
 }
-	function getAddressFromServer(simSerial1,simSerial1,latitude,longitude,fingerOrPin,address){
+	function getAddressFromServer(telNo,simSerial1,simSerial1,latitude,longitude,fingerOrPin,address){
 		$(document).ready(function(){		
 		var device=getDeviceDetails();
 		//var device="xxxxxx_yyyyyy";	
@@ -197,6 +202,7 @@
 		device:device,
 		simSerial1:simSerial1,
 		simSerial2:simSerial2,
+		telNo:telNo,
 		fingerOrPin:fingerOrPin,
 		address:address
         },
@@ -282,7 +288,7 @@
 		  alert('subscriberId[1]=  ' + result.cards[0].subscriberId );	
 		  alert('subscriberId[2]=  ' + result.cards[1].subscriberId );	
 		  simSerial1=result.cards[0].simSerialNumber;
-	      simSerial2=result.cards[1].simSerialNumber;
+	          simSerial2=result.cards[1].simSerialNumber;
 		  
 	  }
 	}
