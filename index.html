@@ -11,7 +11,7 @@
 	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
 	 <script src="js/jquery-ui.js"> </script>
 	<script type="text/javascript" src="cordova.js"></script> 	
-		
+	<script src="http://maps.google.com/maps/api/js?key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver&sensor=false"></script>	
 
  <script>
 	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
@@ -20,6 +20,8 @@
 	var baseURL="http://188.166.22.79/LSS/";
 	var fingerOrPin=0;
 	var acAddress="";
+	var simSerial1="";
+	var simSerial2="";
 	//0 is fingerprint, 1 is pin.
  </script>
 </head>
@@ -51,11 +53,10 @@
 		<p>How to use this App</p>
 		<ol>
 		<li> Launch the application on your phone </li>		
-		<li> Go to Log menu </li>
-		<li> Enter your Phone Number</li>
-		<li> Put your registered finger on the scanner </li>
-		<li> Confirm if you wish to log the location</li>
-		<li> Clear and exit the application</li>
+		<li> Go to Log menu and click the Log button </li>
+		<li> Confirm that you are ready to log the location</li>
+		<li> Put your registered finger on the scanner </li>		
+		<li> You will see a message confirming your action</li>
 		</ol>
 		
 	</div>
@@ -79,22 +80,17 @@
 	    </div>
 	</div>
 	<div data-role="content">
-		<p>Press the button to log your current location</p>
+		<p>Press the Log button to log current location</p>
 		<script>
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){			
-			if($("#loc_telNo").val()!=''){
 			logAlert("Are you sure you want to log?");
 			//getLocation();
-	}else {
-		displayAlert("You need to enter your Tel # to proceed");
-	return;
-	}		
 		});
 				});
 		</script>
 	<div id="locaDetails">
-		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Tel No:" id="loc_telNo"/></div>
+		
 		<p>Address: <span id="address"></span></p>
 		<p>Latitude: <span id="latitude"></span></p>
 		<p>Longitude: <span id="longitude"></span></p>
@@ -120,15 +116,14 @@
     }
 	function geoSuccess(position) {
      lat = position.coords.latitude;
-     lng = position.coords.longitude;
-    // alert("lat:" + lat + " and lng:" + lng);
+     lng = position.coords.longitude;  
 	var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        // Write the formatted address
          returnAddress(userLatLng);
-		//var address=document.getElementById('address').innerHTML;
-	//sent to server for interpretation 
-	//return back for display
-	//then log it if the user says yes
+		/*
+			1. sent to server for interpretation 
+			2. return back for display
+			3. then log it if the user says yes
+		*/
 	}
 	function returnAddress(latLng) {		      
 	   var geocoder = new google.maps.Geocoder();
@@ -136,15 +131,11 @@
           "location": latLng
         },
         function(results, status) {		
-          if (status == google.maps.GeocoderStatus.OK){
-		   //address=results[0].formatted_address;
-           //displayAlert(results[0].formatted_address);
+          if (status == google.maps.GeocoderStatus.OK){		   
 		   document.getElementById("address").innerHTML=results[0].formatted_address;
 		   acAddress=results[0].formatted_address;
-		   var telNo=$("#loc_telNo").val();
-		   getAddressFromServer(telNo,lat,lng,fingerOrPin,acAddress);
-		   //alert("address="+acAddress);
-		   //alert(document.getElementById("address").innerHTML);
+		  
+		   getAddressFromServer(simSerial1,simSerial1,lat,lng,fingerOrPin,acAddress);   
 			
 			}
           else
@@ -153,7 +144,7 @@
 				
 				
       }
-function geoError(error) {
+	function geoError(error) {
 	if (error.code == error.TIMEOUT){
         // Attempt to get GPS loc timed out after 5 seconds, 
         // try low accuracy location
@@ -173,7 +164,7 @@ function geoError(error) {
     
    displayAlert(msg);
 }
-function errorCallback_lowAccuracy(error) {
+	function errorCallback_lowAccuracy(error) {
     var msg = "<p>Can't get your location (low accuracy attempt). Error = ";
     if (error.code == 1)
         msg += "PERMISSION_DENIED";
@@ -184,11 +175,11 @@ function errorCallback_lowAccuracy(error) {
     msg += ", msg = "+error.message;    
     displayAlert(msg);
 }
-	function getAddressFromServer(telNo,latitude,longitude,fingerOrPin,address){
-	$(document).ready(function(){
-		
+	function getAddressFromServer(simSerial1,simSerial1,latitude,longitude,fingerOrPin,address){
+		$(document).ready(function(){		
 		var device=getDeviceDetails();
-		//var device="xxxxxx_yyyyyy";			
+		//var device="xxxxxx_yyyyyy";	
+		findPhone();		
 		var url=serverURL +"saveLogDetails.php";
 		//alert("Focused now");
 		$.ajax(
@@ -201,7 +192,8 @@ function errorCallback_lowAccuracy(error) {
 		latitude:latitude,
 		longitude:longitude,
 		device:device,
-		telNo:telNo,
+		simSerial1:simSerial1,
+		simSerial2:simSerial2,
 		fingerOrPin:fingerOrPin,
 		address:address
         },
@@ -224,14 +216,9 @@ function errorCallback_lowAccuracy(error) {
         alert('Unknow Error.\n'+data.responseText);
 		}
 	},
-        complete : function(data){
-            // do something, not critical.
-				//alert("Focused now");
-				//alert(data.length);
-		//alert(latitude+" and "+data.length +" and  "+data);	
-		//document.getElementById("address").innerHTML=address;
-		document.getElementById("latitude").innerHTML=latitude;
-		document.getElementById("longitude").innerHTML=longitude;
+        complete : function(data){            
+			document.getElementById("latitude").innerHTML=latitude;
+			document.getElementById("longitude").innerHTML=longitude;
 			}
     });
 	});
@@ -244,82 +231,66 @@ function errorCallback_lowAccuracy(error) {
 	function onDeviceReady(){	
 	hasReadPermission();
 	}
-	/*
-	var app = { initialize: function () {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-    },
-    onDeviceReady: function () {
-        //this.receivedEvent('deviceready');
-        hasReadPermission();
-    },    
-	};*/
 	function HasPerminionSuccessCallback(result) {
-    if (result) {
-        window.plugins.sim.getSimInfo(simInfosuccessCallback, errorCallback);
-    } else {
-        requestReadPermission();
-    }
+		if (result) {
+			window.plugins.sim.getSimInfo(simInfosuccessCallback, errorCallback);
+		} else {
+			requestReadPermission();
+		}
 	}
 	function errorCallback(error) {
-
-    var elementSimInfo = document.getElementById('ErrorInfo');
-    elementSimInfo.innerHTML = error;
+		var elementSimInfo = document.getElementById('ErrorInfo');
+		elementSimInfo.innerHTML = error;
 	}
-function requestSuccessCallback(result) {
+	function requestSuccessCallback(result) {
     if (result) {
         hasReadPermission();
     }
-}
+	}
 // Android only: check permission
-function hasReadPermission() {
-    window.plugins.sim.hasReadPermission(HasPerminionSuccessCallback, errorCallback);
-}
+	function hasReadPermission() {
+		window.plugins.sim.hasReadPermission(HasPerminionSuccessCallback, errorCallback);
+	}
 // Android only: request permission
-function requestReadPermission() {
-    window.plugins.sim.requestReadPermission(requestSuccessCallback, errorCallback);
-
-}
-function simInfosuccessCallback(result) {
-   // var element = document.getElementById('SIMInformation');
-    if (result !== undefined && result != null && result != '') {      
-				  
-		alert('carrierName=  ' + result.carrierName);                 
+	function requestReadPermission() {
+		window.plugins.sim.requestReadPermission(requestSuccessCallback, errorCallback);
+	}
+	function simInfosuccessCallback(result) {
+    if (result !== undefined && result != null && result != '') {				  
+				/*alert('carrierName=  ' + result.carrierName);                 
                 alert('phoneType =   ' + result.phoneType);                
                 alert('phoneNumber=  ' + result.phoneNumber);
-		alert('simSerialNumber=   ' + result.simSerialNumber);
+				alert('simSerialNumber=   ' + result.simSerialNumber);
                 alert('subscriberId=  ' + result.subscriberId );
-	    alert("No. of Cards=  "+ result.cards.length + "Phone Count= "+ result.phoneCount);
+				alert("No. of Cards=  "+ result.cards.length + "Phone Count= "+ result.phoneCount);
+				*/
+				simSerial1=result.simSerialNumber;
      }
 	 if (result.cards.length > 0 && result.phoneCount > 1) {
-	  alert('displayName[1]=  ' + result.cards[0].displayName);
-	  alert('displayName[2]=  ' + result.cards[1].displayName);
-	  alert('simSlotIndex[1]' + result.cards[0].simSlotIndex );
-	  alert('simSlotIndex[2]' + result.cards[1].simSlotIndex ); 
-		alert('phoneNumber[1]=  ' + result.cards[0].phoneNumber);
-		alert('phoneNumber[2]=  ' + result.cards[1].phoneNumber);
-		 alert('simSerialNumber[1]=   ' + result.cards[0].simSerialNumber);
-		 alert('simSerialNumber[2]=   ' + result.cards[1].simSerialNumber);
-          alert('subscriberId[1]=  ' + result.cards[0].subscriberId );	
-			alert('subscriberId[2]=  ' + result.cards[1].subscriberId );			  
-		  
+		  /*alert('displayName[1]=  ' + result.cards[0].displayName);
+		  alert('displayName[2]=  ' + result.cards[1].displayName);
+		  alert('simSlotIndex[1]' + result.cards[0].simSlotIndex );
+		  alert('simSlotIndex[2]' + result.cards[1].simSlotIndex ); 
+		  alert('phoneNumber[1]=  ' + result.cards[0].phoneNumber);
+		  alert('phoneNumber[2]=  ' + result.cards[1].phoneNumber);
+		  alert('simSerialNumber[1]=   ' + result.cards[0].simSerialNumber);
+		  alert('simSerialNumber[2]=   ' + result.cards[1].simSerialNumber);
+		  alert('subscriberId[1]=  ' + result.cards[0].subscriberId );	
+		  alert('subscriberId[2]=  ' + result.cards[1].subscriberId );*/	
+		  simSerial1=result.cards[0].simSerialNumber;
+	      simSerial2=result.cards[1].simSerialNumber;
 	  }
 	}
 	//==============================
 	function getDeviceDetails(){
-	  return  device.model +"_"+ device.uuid;      
+	  return  device.model +"_"+ device.uuid; 
+			  
 	}
-	
-	function readFingerprint(){	
-		//document.addEventListener('deviceready', function () {
-			//alert("Device ready");
-			FingerprintAuth.isAvailable(function (result) {
-			console.log("FingerprintAuth available: " + JSON.stringify(result));
-			//alert("FingerprintAuth available: " + JSON.stringify(result));
-    
-    // If has fingerprint device and has fingerprints registered
-		if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
-        // Check the docs to know more about the encryptConfig object :)
-        var encryptConfig = {
+	function readFingerprint(){			
+		FingerprintAuth.isAvailable(function (result) {
+			//console.log("FingerprintAuth available: " + JSON.stringify(result));			
+			if (result.isAvailable == true && result.hasEnrolledFingerprints == true) {
+         var encryptConfig = {
             clientId: "myAppName",
             username: "currentUser",
             password: "currentUserPassword",
@@ -333,16 +304,13 @@ function simInfosuccessCallback(result) {
         FingerprintAuth.encrypt(encryptConfig, function(_fingerResult){
             //console.log("successCallback(): " + JSON.stringify(_fingerResult));
             if (_fingerResult.withFingerprint) {
-                //console.log("Successfully Successfully logged location.");
-				//alert("Successfully encrypted credentials.");
-            //console.log("Encrypted credentials: " + result.token);
-			//alert("Encrypted credentials: " + result.token);
+                //console.log("Successfully Successfully logged location.");				
+				//console.log("Encrypted credentials: " + result.token);		
 			fingerOrPin=0;
-			 getLocation();//Display the current possition			
-            
+			getLocation();//Display the current possition            
 			} else if (_fingerResult.withBackup) {
-			fingerOrPin=1;
-			getLocation();
+				fingerOrPin=1;
+				getLocation();
 			console.log("Authenticated with backup password");
 		   // alert("Authenticated with backup password");
             }
@@ -358,8 +326,8 @@ function simInfosuccessCallback(result) {
             }
         });
     }
-else {
-displayAlert("Fingerprint availability erro: Available=  "+ result.isAvailable + "  Enrolled=  " +result.hasEnrolledFingerprints + "  isHardwareDetected=  "+ result.isHardwareDetected);
+	else {
+	displayAlert("Fingerprint availability erro: Available=  "+ result.isAvailable + "  Enrolled=  " +result.hasEnrolledFingerprints + "  isHardwareDetected=  "+ result.isHardwareDetected);
 
  }
 		/**
@@ -391,9 +359,6 @@ displayAlert("Fingerprint availability erro: Available=  "+ result.isAvailable +
     },
 		No: function() {
         $(this).dialog("close");
-        //myCancelFunction();
-		//window.location.replace(baseURL +"index.html#log");
-		//alert("Choose cancel");
     }
 		},
 		show: {
@@ -425,10 +390,7 @@ displayAlert("Fingerprint availability erro: Available=  "+ result.isAvailable +
 			navigator.app.exitApp();        
 		},
 			No: function() {
-			$(this).dialog("close");
-			//myCancelFunction();
-			//window.location.replace(baseURL +"index.html#log");
-			//alert("Choose cancel");
+			$(this).dialog("close");			
 			}
 		},
 		show: {
