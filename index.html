@@ -181,7 +181,8 @@
 		$(document).ready(function(){		
 		var device=getDeviceDetails();
 		//var device="xxxxxx_yyyyyy";	
-		
+		alert('simSerialNumber=   ' + simSerial1);
+		  alert('simSerialNumber2=   ' + simSerial2);
 		var url=serverURL +"saveLogDetails.php";
 		//alert("Focused now");
 		$.ajax(
@@ -267,7 +268,7 @@
 				alert("No. of Cards=  "+ result.cards.length + "Phone Count= "+ result.phoneCount);
 				*/
 				simSerial1=result.simSerialNumber;
-				alert('simSerialNumber=   ' + simSerial1);
+				
      }
 	 if (result.cards.length > 0 && result.phoneCount > 1) {
 		  /*alert('displayName[1]=  ' + result.cards[0].displayName);
@@ -282,8 +283,7 @@
 		  alert('subscriberId[2]=  ' + result.cards[1].subscriberId );*/	
 		  simSerial1=result.cards[0].simSerialNumber;
 	      simSerial2=result.cards[1].simSerialNumber;
-		  alert('simSerialNumber=   ' + simSerial1);
-		  alert('simSerialNumber2=   ' + simSerial2);
+		  
 	  }
 	}
 	//==============================
