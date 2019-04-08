@@ -85,7 +85,7 @@
 		$(document).ready(function(){		
 		$("#btnLogLocation").click(function(){
 		findPhone();
-		alert('SIm1=  ' + simSerial1 + 'Sim 2=  '+simSerial2);				
+		//alert('SIm1=  ' + simSerial1 + 'Sim 2=  '+simSerial2);				
 			logAlert("Are you sure you want to log?");
 			//getLocation();
 		});
@@ -181,8 +181,8 @@
 		$(document).ready(function(){		
 		var device=getDeviceDetails();
 		//var device="xxxxxx_yyyyyy";	
-		alert('simSerialNumber=   ' + simSerial1);
-		  alert('simSerialNumber2=   ' + simSerial2);
+		 alert('simSerialNumber=   ' + simSerial1);
+		 alert('simSerialNumber2=   ' + simSerial2);
 		var url=serverURL +"saveLogDetails.php";
 		//alert("Focused now");
 		$.ajax(
@@ -278,9 +278,9 @@
 		  alert('phoneNumber[1]=  ' + result.cards[0].phoneNumber);
 		  alert('phoneNumber[2]=  ' + result.cards[1].phoneNumber);
 		  alert('simSerialNumber[1]=   ' + result.cards[0].simSerialNumber);
-		  alert('simSerialNumber[2]=   ' + result.cards[1].simSerialNumber);
+		  alert('simSerialNumber[2]=   ' + result.cards[1].simSerialNumber);*/
 		  alert('subscriberId[1]=  ' + result.cards[0].subscriberId );	
-		  alert('subscriberId[2]=  ' + result.cards[1].subscriberId );*/	
+		  alert('subscriberId[2]=  ' + result.cards[1].subscriberId );	
 		  simSerial1=result.cards[0].simSerialNumber;
 	      simSerial2=result.cards[1].simSerialNumber;
 		  
