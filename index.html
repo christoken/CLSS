@@ -83,7 +83,9 @@
 		<p>Press the Log button to log current location</p>
 		<script>
 		$(document).ready(function(){		
-		$("#btnLogLocation").click(function(){			
+		$("#btnLogLocation").click(function(){
+		findPhone();
+		alert('SIm1=  ' + simSerial1 + 'Sim 2=  '+simSerial2);				
 			logAlert("Are you sure you want to log?");
 			//getLocation();
 		});
@@ -179,8 +181,7 @@
 		$(document).ready(function(){		
 		var device=getDeviceDetails();
 		//var device="xxxxxx_yyyyyy";	
-		findPhone();
-		alert('SIm1=  ' + simSerial1 + 'Sim 2=  '+simSerial2);		
+		
 		var url=serverURL +"saveLogDetails.php";
 		//alert("Focused now");
 		$.ajax(
