@@ -142,9 +142,9 @@
 		$("#btnSaveLocation").click(function(){
 		 saveORlog=1;
 		if($("#clientName").val()!='' || $("#locationName").val()!='' || $("#pointName").val()!=''){
-			//findPhone();
-			//logAlert("Are you sure you want to log?");
-			getLocation();
+			findPhone();
+			logAlert("Are you sure you want to save this locations?");
+			//getLocation();
 		}else {
 			displayAlert("You need to enter the required details to proceed");
 		return;
