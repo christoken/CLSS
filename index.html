@@ -214,7 +214,7 @@
 		   var client=$("#clientName").val();
 		   var location=$("#locationName").val();
 		   var point=$("#pointName").val();
-		   alert("Tel: "+ telNoSave);
+		   //alert("Tel: "+ telNoSave);
 		   saveNewPoints(lat,lng,telNoSave,simSerial1,simSerial2,fingerOrPin,client,location,point,acAddress);		   
 		   }
 		   			
@@ -261,8 +261,8 @@
 		$(document).ready(function(){		
 		var device=getDeviceDetails();
 		//var device="xxxxxx_yyyyyy";	
-		 alert('simSerialNumber=   ' + simSerial1);
-		 alert('simSerialNumber2=   ' + simSerial2);
+		 //alert('simSerialNumber=   ' + simSerial1);
+		// alert('simSerialNumber2=   ' + simSerial2);
 		var url=serverURL +"saveLogDetails.php";
 		//alert("Focused now");
 		$.ajax(
