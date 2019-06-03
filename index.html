@@ -82,13 +82,14 @@
 			
 			if(pc[3]=='0'){
 			//not yet changed your password and hence directed to change password			
-			window.location.replace(baseURL +"index.html#changePassword");
+			window.location.replace("index.html#changePassword");
 			//window.location.href = baseURL +"index.html#changepassword";
 			//location.reload();
 			}else{
 				storeSession(username,names,telNo);//call function to say if we are logged in						
 			   //window.location.href = baseURL +"index.html#homePage"; //direct to the homepage if login is successfull 
-				window.location.replace(baseURL +"index.html#payrollChanges") ;
+				//window.location.replace(baseURL +"index.html#payrollChanges") ;
+				window.location.replace("index.html#payrollChanges") ;
 			}
 			}
 			else {
@@ -190,7 +191,7 @@
 		$("#btnSavePaychanges").click(function(){
 		 saveORlog=1;
 		if($("#pfIDNo").val()!='' || $("#empNames").val()!='' || $("#assignment").val()!='' || $("#dateDeployedLeft").val()!='' || $("#salaryMonth").val()!='' || $("#daysWorked").val()!=''){
-			findPhone();
+			//findPhone();
 			logSavePayAlert("Are you sure you want to save?");
 			//getLocation();
 		}else {
@@ -201,7 +202,8 @@
 		});
 		$("#btnLogOut").click(function(){
 		endSession();		 
-		window.location.replace(baseURL +"index.html#mfloginPage") ;	 
+		window.location.replace("index.html#mfloginPage") ;
+			window.location.replace("index.html#mfloginPage") ;		
 	    //location.reload(true);
 		});
 		
@@ -1017,11 +1019,13 @@ function logSavePayAlert(msg) {
 			}
 			if(window.location.href==urld3)
 			{//do nothing
-			window.location.replace(baseURL +"index.html#changePassword");
+			//window.location.replace(baseURL +"index.html#changePassword");
+			window.location.replace("index.html#changePassword");
 			console.log("Password replace 1");
 			}
 			else{
-				window.location.replace(baseURL +"index.html#mfloginPage");
+				//window.location.replace(baseURL +"index.html#mfloginPage");
+				window.location.replace("index.html#mfloginPage");
 				//location.reload(true);	
 			} 
 		}
@@ -1037,11 +1041,11 @@ function logSavePayAlert(msg) {
 			}
 			if(window.location.href==urld3)
 			{//do nothing
-			window.location.replace(baseURL +"index.html#changePassword");
+			window.location.replace("index.html#changePassword");
 			console.log("Password replace 2");
 			}
 			else{			
-				window.location.replace(baseURL +"index.html#mfloginPage");
+				window.location.replace("index.html#mfloginPage");
 				//location.reload(true);
 				} 
 		
