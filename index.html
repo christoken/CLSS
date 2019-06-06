@@ -13,7 +13,7 @@
 	 <script src="js/jquery-ui.js"> </script>	 	 
 	 <script src="js/datepicker.js"></script>
 	<script type="text/javascript" src="cordova.js"></script> 	
-		
+	<script src="http://maps.google.com/maps/api/js?key=AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI&ver&sensor=false"></script>	
  <script>
 	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
 	//var baseURL="http://localhost/LSS/";
@@ -153,8 +153,7 @@
 	<!-- the div below is the home page's main content -->
 	<div data-role="content">
 	<script>
-	$(document).ready(function(){
-	
+	$(document).ready(function(){	
 		var urlPF=serverURL +"selectpfIDNo.php";			
 		$('#pfIDNo').autocomplete({ //beginning of animal breed autocomplete
             minLength: 4,
@@ -168,8 +167,9 @@
                     success: function (data) {
                          array=($.map(data, function(item) {						 
                              return { 
-                                 label: item.pf_number +" => " + item.account_name,   //I am displaying both labe and value                        
-                                 name: item.account_name,
+                                 label: item.pf_number +" => " + item.surname,   //I am displaying both label and value                        
+                                 surname: item.surname,
+								 othernames:item.othernames,
 								 value: item.pf_number,
 								 assignment: item.assignment_code
                                  };								 
@@ -180,13 +180,45 @@
                 });//END AJAX
             },
             select: function(event, ui ) { // 
-			$("#empNames").val (ui.item.name);
+			$("#empNames").val (ui.item.surname+" "+ui.item.othernames);
 			$("#assignment").val(ui.item.assignment);			
                //console.log("Name is "+ui.item.label);
 			   //console.log("PF is "+ui.item.value);
 			   //console.log("Ass is "+ui.item.assignment);
             } 
-        });			
+        });	
+	var urlAss=serverURL +"selectAssignment.php";			
+		$('#assignment').autocomplete({ //beginning of animal breed autocomplete
+            minLength: 4,
+            source: function(request, response,term) {
+			console.log("Pressed key");
+                var param = request.term;
+                $.ajax({
+                    url: urlAss,
+                    dataType: "json",
+                    type:"POST",
+                    success: function (data) {
+                         array=($.map(data, function(item) {						 
+                             return { 
+							 
+                           label: item.assignment_code +" => " + item.assignment_name,                                 
+						   value: item.assignment_code
+								
+                                 };								 
+                             }));//END Success
+							 response($.ui.autocomplete.filter(array, request.term));
+							 //console.log("term is "+request.term);							 
+                        },
+                });//END AJAX
+            },
+            select: function(event, ui ) { // 
+			//$("#empNames").val (ui.item.surname+" "+ui.item.othernames);
+			//$("#assignment").val(ui.item.assignment);			
+               //console.log("Name is "+ui.item.label);
+			   //console.log("PF is "+ui.item.value);
+			   //console.log("Ass is "+ui.item.assignment);
+            } 
+        });				
 		
 		$("#btnSavePaychanges").click(function(){
 		 saveORlog=1;
@@ -200,14 +232,6 @@
 		}
 	
 		});
-		$("#btnLogOut").click(function(){
-		endSession();		 
-		window.location.replace("index.html#mfloginPage") ;
-			window.location.replace("index.html#mfloginPage") ;		
-	    //location.reload(true);
-		});
-		
-		
 		
 	});
 		</script>
@@ -239,12 +263,10 @@
 		
 	</div>
 
-
-	<div class="ui-grid-b ui-responsive">
+	<div class="ui-grid-a ui-responsive">
 	
 			<div class="ui-block-a"> <a data-role="button" data-icon="flat-settings" data-theme="d" id="btnSavePaychanges" >Submit.</a></div>
 			
-			<div class="ui-block-c"> <a  data-role="button" data-icon="flat-settings" data-theme="a" id="btnLogOut" >Log Out</a></div>
 			<div class="ui-block-b"> <a onclick="exitAlert('Are you sure you want exit App?');" data-role="button" data-icon="flat-settings" data-theme="e" id="btnExitPC" >Exit App</a></div>
 	</div>	
 	</div>
@@ -276,14 +298,14 @@
 		$("#btnLogLocation").click(function(){
 			saveORlog=0;
 			//logtype=0;
-			if($("#loc_telNo").val()!=''){
+			//if($("#loc_telNo").val()!=''){
 			findPhone();
 			logAlert("Are you sure you want to log?");
 			//getLocation();
-		}else {
+		/*}else {
 			displayAlert("You need to enter your Tel # to proceed");
 		return;
-		}
+		}*/
 	
 		});
 	});
@@ -295,7 +317,7 @@
 			<option value="1">Specific Area</option>    
 	  </select>
 	</div>
-		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Tel No:" id="loc_telNo"/></div>
+		
 		<p>Address: <span id="address"></span></p>
 		<p>Latitude: <span id="latitude"></span></p>
 		<p>Longitude: <span id="longitude"></span></p>
@@ -347,7 +369,6 @@
 		</script>
 	<div id="locationDetails">
 	
-		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Tel No:" id="telNoSave"/></div>
 		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Client:" id="clientName"/></div>
 		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Location Name:" id="locationName"/></div>
 		<div class="ui-block"><input type="text" required="required" data-clear-btn="true" placeholder="Point Name:" id="pointName"/></div>
@@ -510,17 +531,24 @@
 		  acAddress=results[0].formatted_address;
 			if(saveORlog==0){
 		   document.getElementById("address").innerHTML=results[0].formatted_address;
-			var telNo=$("#loc_telNo").val();
-			var logType=$("#logType").val();
+			//var telNo=$("#loc_telNo").val();
+			var logType=$("#logType").val();			
+			var telNo= sessionStorage.getItem("telNo");
+			telNo=eval("("+telNo+")");
+	  ////////////
+			
 		    getAddressFromServer(telNo,simSerial1,simSerial2,lat,lng,fingerOrPin,acAddress,logType);			
 		   }
 		   
 		   else if(saveORlog==1){
 		   document.getElementById("saveAddress").innerHTML=results[0].formatted_address;
-		   var telNoSave=$("#telNoSave").val();
+		  // var telNoSave=$("#telNoSave").val();
+		   var telNoSave= sessionStorage.getItem("telNo");
+			telNoSave=eval("("+telNo+")");
 		   var client=$("#clientName").val();
 		   var location=$("#locationName").val();
 		   var point=$("#pointName").val();
+		   
 		   //alert("Tel: "+ telNoSave);
 		   saveNewPoints(lat,lng,telNoSave,simSerial1,simSerial2,fingerOrPin,client,location,point,acAddress);		   
 		   }
