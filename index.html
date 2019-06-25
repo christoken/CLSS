@@ -13,12 +13,19 @@
 	 <script src="js/jquery-ui.js"> </script>	 	 
 	 <script src="js/datepicker.js"></script>
 	<script type="text/javascript" src="cordova.js"></script> 	
-		
+	<script src="http://maps.google.com/maps/api/js?key=AIzaSyBlRL7HLQhCd-rz7DdB5aKTe63kFk8jBPM&ver&sensor=false"></script>	
+	
+	<!--
+	AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI // old working key
+	AIzaSyAPxbNErnG4KdzBZ3Xj_8810LzCJpFDQ0A //
+	//AIzaSyBlRL7HLQhCd-rz7DdB5aKTe63kFk8jBPM //current key
+	-->
  <script>
 	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
 	//var baseURL="http://localhost/LSS/";
 	var serverURL="http://3modernsystems.com/LSS/server/"; // The server address of the PHP files
 	var baseURL="http://3modernsystems.com/LSS/";
+
 	var fingerOrPin=0;
 	var acAddress="";
 	var simSerial1="";
@@ -154,7 +161,30 @@
 	<div data-role="content">
 	<script>
 	$(document).ready(function(){	
-		var urlPF=serverURL +"selectpfIDNo.php";			
+		var urlPF=serverURL +"selectpfIDNo.php";		
+		$("#pfIDNo").blur(function() {
+		var pfIDNo=$("#pfIDNo").val();
+                $.ajax({
+                    url: urlPF,
+                    dataType: "json",
+                    type:"POST",
+					data : {
+			pfIDNo:pfIDNo		
+			},
+        success: function (data) {                    
+			var JSONString = JSON.stringify(data);		
+			var obj=JSON.parse(JSONString);			
+			var pf=	obj[0].pf_number;	
+			var id=obj[0].id_number;
+			var surname=obj[0].surname;
+			var othernames=obj[0].othernames;
+			var assignment_code=obj[0].assignment_code;
+		$("#empNames").val (surname+" "+othernames);
+		$("#assignment").val(assignment_code);				
+                 },
+            }); 
+			});
+		/*	
 		$('#pfIDNo').autocomplete({ //beginning of animal breed autocomplete
             minLength: 4,
             source: function(request, response,term) {
@@ -186,7 +216,8 @@
 			   //console.log("PF is "+ui.item.value);
 			   //console.log("Ass is "+ui.item.assignment);
             } 
-        });	
+        });	*/
+		
 	var urlAss=serverURL +"selectAssignment.php";			
 		$('#assignment').autocomplete({ //beginning of animal breed autocomplete
             minLength: 4,
@@ -212,11 +243,7 @@
                 });//END AJAX
             },
             select: function(event, ui ) { // 
-			//$("#empNames").val (ui.item.surname+" "+ui.item.othernames);
-			//$("#assignment").val(ui.item.assignment);			
-               //console.log("Name is "+ui.item.label);
-			   //console.log("PF is "+ui.item.value);
-			   //console.log("Ass is "+ui.item.assignment);
+			
             } 
         });				
 		
