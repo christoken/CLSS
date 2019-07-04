@@ -1,4 +1,67 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>Supervision Mobile</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
+		 <meta charset="UTF-8">
+	 <link rel="stylesheet" href="css/datepicker.css">	
+	 <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+	 <link rel="stylesheet" href="css/jquery-ui.css">
+	<!-- link to jQuery and jQuery Mobile JavaScript libraries: -->
+	<script src="js/jquery-1.10.1.min.js"></script>
+	<script src="js/jquery.mobile-1.3.1.min.js"></script>	 	 
+	 <script src="js/jquery-ui.js"> </script>	 	 
+	 <script src="js/datepicker.js"></script>
+	<script type="text/javascript" src="cordova.js"></script> 	
+	<script src="http://maps.google.com/maps/api/js?key=AIzaSyBlRL7HLQhCd-rz7DdB5aKTe63kFk8jBPM&ver&sensor=false"></script>	
+	
+	<!--
+	AIzaSyCNOiO5P22wUCCOe7MIquPFPps4b6N3LAI // old working key
+	AIzaSyAPxbNErnG4KdzBZ3Xj_8810LzCJpFDQ0A //
+	//AIzaSyBlRL7HLQhCd-rz7DdB5aKTe63kFk8jBPM //current key
+	-->
+ <script>
+	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
+	//var baseURL="http://localhost/LSS/";
+	var serverURL="http://3modernsystems.com/LSS/server/"; // The server address of the PHP files
+	var baseURL="http://3modernsystems.com/LSS/";
 
+	var fingerOrPin=0;
+	var acAddress="";
+	var simSerial1="";
+	var simSerial2="";
+	var saveORlog=3;//0 is log 1 is save new points
+	var globalusn="";
+	var globalNames="";
+	var globalTelNo="";
+	//var logtype=2;
+	//0 is fingerprint, 1 is pin.
+ </script>
+</head>
+<body  onpageshow="checkonPageshow()"   style="display: mfloginPage;">
+	<div id="dialog" title="Location Log">
+		<p id="alertclass1">Location Log</p>
+	</div>
+<!-- the div below is a page - the home page -->
+<div data-role="page" id="mfloginPage" >
+   <script>
+   $(document).ready(function(){
+   
+		$("#btnlogin").click(function(){
+		document.getElementById("loginerror").innerHTML="";
+		var username= $("#loginId").val();
+		var password=$("#loginPassword").val();	
+		
+		if(username=='' && password==''){
+		var response="Please fill out the required fields";
+		displayAlert(response);
+		//alert("Please fill out the form");
+		}
+		else if(username=='' && password!==''  ){alert('Username field is required')}
+		else if(password=='' && username!=='' && organization!==''){alert('Password field is required')}
+		
+		else{	
+		var url=serverURL + "loginmobile.php";
 			$.ajax(
 			{
 				// Post select to url.
@@ -68,8 +131,8 @@
 		 
          <div data-role="content" role="main">
             
-			<div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="text" required="required" placeholder="Username" id="loginId" value="chris" maxlength="12"/></div>
-            <div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="password" required="required" placeholder="Password" id="loginPassword" value="chep" maxlength="12"/></div>
+			<div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="text" required="required" placeholder="Username" id="loginId" value="" maxlength="12"/></div>
+            <div class="ui-block"><input onblur="checkLengthLogin(this,'loginerror','#btnlogin')" type="password" required="required" placeholder="Password" id="loginPassword" value="" maxlength="12"/></div>
               
 		   <div ><a data-role="button"  data-icon="flat-settings" data-theme="e" id="btnlogin" >Log in</a></div>
 			 <!-- <div class="ui-block"><a data-role="button" type="submit" required="required" data-icon="flat-settings" data-theme="d" id="btnlogin" >Login</a></div>--> 
