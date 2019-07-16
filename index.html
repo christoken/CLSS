@@ -21,8 +21,8 @@
 	//AIzaSyBlRL7HLQhCd-rz7DdB5aKTe63kFk8jBPM //current key
 	-->
  <script>
-	var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
-	var baseURL="http://localhost/LSS/";
+	//var serverURL="http://localhost/LSS/server/"; // The server address of the PHP files
+	//var baseURL="http://localhost/LSS/";
 	var serverURL="http://3modernsystems.com/LSS/server/"; // The server address of the PHP files
 	var baseURL="http://3modernsystems.com/LSS/";
 
@@ -251,7 +251,17 @@
 		 saveORlog=1;
 		if($("#pfIDNo").val()!='' || $("#empNames").val()!='' || $("#assignment").val()!='' || $("#dateDeployedLeft").val()!='' || $("#salaryMonth").val()!='' || $("#daysWorked").val()!=''){
 			//findPhone();
-			logSavePayAlert("Are you sure you want to save?");
+			var x;
+			var y=$('#changeType option:selected').text();
+			if($("#changeType").val()==1){
+			x="Remove guard";
+			}
+			else {
+			x="Add guard";
+			}
+			
+			
+			logSavePayAlert("Are you sure you want to "+y+" ?");
 			//getLocation();
 		}else {
 			displayAlert("You need to enter the required details to proceed");
@@ -282,11 +292,14 @@
 	<div class="ui-block-a" style="width:30%" ><label><b>Change Type:</b> </label> </div>
 	<div class="ui-block-b" style="width:70%" >	
 		<select name="changeType" id="changeType">
-			<option value="0">From Annual Leave </option>
+			<option value="0">Leave Reliever</option>
+			<option value="0">Additional guards</option>
+			<option value="0">Off Reliever</option>
 			<option value="0">Replacement</option>
 			<option value="0">New Employee</option>
 			<option value="0">New Assignment</option>
-			<option value="1">Old Guard Leaving</option> 			
+			<option value="1">Old guard leaving</option>
+			<option value="1">Terminated Assignment</option>  			
 	  </select>
 	  </div>
 	</div>		
@@ -979,6 +992,8 @@ function logSavePayAlert(msg) {
 		//alert(yy);
 	  var daysWorked= $("#daysWorked").val();
 	  var changeType= $("#changeType").val();
+	  var changeTypeDesc=$('#changeType option:selected').text();
+	  //alert(changeType);
 	  var telNo= sessionStorage.getItem("telNo");
 	  telNo=eval("("+telNo+")");
 	  console.log("PF is  "+pfIDNo );
@@ -998,6 +1013,7 @@ function logSavePayAlert(msg) {
 		salaryMonth:salaryMonth,
 		daysWorked:daysWorked,
 		changeType:changeType,
+		changeTypeDesc:changeTypeDesc,
 		telNo:telNo		
         },
         success : function(data){		
